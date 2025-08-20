@@ -1,0 +1,18 @@
+{
+    "name": "only-ts",
+    "version": "1.0.0",
+    "main": "main.js",
+    "scripts": {
+        "_tsc": "tsc -p tsconfig.json",
+        "_gcc": "google-closure-compiler --js='dist/*.js' --js='dist/**/*.js' --entry_point='dist/main.js' --js_output_file='wikiifc.min.js' --module_resolution NODE",
+        "build": "npm run _tsc && npm run _gcc"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "google-closure-compiler": "^20250820.0.0",
+        "typescript": "^5.9.2"
+    }
+}

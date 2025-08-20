@@ -1,0 +1,4 @@
+node_modules
+dist
+wikiifc.min.js
+tsconfig.tsbuildinfo
