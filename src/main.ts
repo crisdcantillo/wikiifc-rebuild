@@ -6,6 +6,8 @@ import FilesModule from "./modules/files/controller";
 import AuthModule from "./modules/auth/controller";
 import { Global, GlobalEvent } from "./utils/global";
 import UToken from "./utils/token";
+import CollaborationModule from "./modules/collaboration/controller";
+import AuthService from "./modules/auth/services";
 
 const app = document.querySelector("#app") as HTMLElement;
 const tabs = new WTabs();
@@ -40,12 +42,15 @@ new AuthModule(authSlot!.center, authSlot!.right);
 const filesSlot = WLayout.getSlot("files");
 const filesController = new FilesModule(filesSlot!.left, filesSlot!.right);
 
+const collaborationSlot = WLayout.getSlot("collaboration");
+new CollaborationModule(collaborationSlot!.left, collaborationSlot!.right);
+
 // Tab listeners
 tabFiles.onClick = () => WLayout.showSideSlots("files");
 tabCollaboration.onClick = () => WLayout.showSideSlots("collaboration");
 tabExplorer.onClick = () => WLayout.showSideSlots("explorer");
 tabSettings.onClick = () => WLayout.showSideSlots("settings");
-tabLogout.onClick = () => UToken.deleteToken();
+tabLogout.onClick = () => AuthService.logout();
 
 // Init files or auth based on authentication
 if (UToken.token) loggedIn();

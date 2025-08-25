@@ -65,5 +65,10 @@ function css(): string
         width: 60px;
         aspect-ratio: 1/1;
     }
+
+    .w-empty__text
+    {
+        text-align: center;
+    }
     `
 }
