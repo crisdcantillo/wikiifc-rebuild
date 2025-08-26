@@ -45,9 +45,9 @@ type TViewpoint =
 
 export default class CollaborationService
 {
-    public static async getTopics(): Promise<TPaginatedResponse<TTopic>>
+    public static async getTopics(fileId: string): Promise<TPaginatedResponse<TTopic>>
     {
-        const data = await WHTTP.get(`/topics/records`) as TPaginatedResponse<TTopic>;
+        const data = await WHTTP.get(`/topics/records?filter=(file.id="${fileId}")`) as TPaginatedResponse<TTopic>;
         return data;
     }
 

@@ -22,7 +22,6 @@ export default class CollaborationModule
 
     private head: WPanelHead;
     private topicList: WTopicList;
-    private empty: WEmpty;
 
     constructor(left: HTMLElement, right: HTMLElement)
     {
@@ -31,14 +30,16 @@ export default class CollaborationModule
 
         this.head = new WPanelHead("Collaboration");
         this.topicList = new WTopicList();
-        this.empty = new WEmpty("warning", "Please select a file to see its topics here");
 
         this.left.appendChild(this.head.html);
         this.left.appendChild(this.topicList.html);
-        this.topicList.html.appendChild(this.empty.html);
 
         this.setHead();
-        Global.listenEvent(GlobalEvent.OnModelLoaded, () => this.showTopics());
+
+        // events
+        Global.listenEvent(GlobalEvent.OnLoggedIn, () => this.showEmptyTopics("Select a file to see its topics here..."));
+        Global.listenEvent(GlobalEvent.OnLoggedOut, () => this.showEmptyTopics("Login to see your topics here..."));
+        Global.listenEvent(GlobalEvent.OnFileOpened, () => this.showTopics(Global.getLoadedModel()));
     }
 
     private setHead(): void
@@ -47,14 +48,28 @@ export default class CollaborationModule
         this.head.addOptions([uploadFile]);
     }
 
-    public async showTopics(): Promise<void>
+    public showEmptyTopics(message: string): void
+    {
+        const empty = new WEmpty("warning", message);
+        this.topicList.html.replaceChildren();
+        this.topicList.html.appendChild(empty.html);
+    }
+
+    public async showTopics(fileId: string): Promise<void>
     {
         const spinner = new WSpinner();
 
         this.topicList.clear();
         this.topicList.html.appendChild(spinner.html);
 
-        const topics = await CollaborationService.getTopics();
+        const topics = await CollaborationService.getTopics(fileId);
+
+        if (topics.items.length <= 0)
+        {
+            spinner.destroy();
+            return this.showEmptyTopics("There are no topics to show for the selected file");
+        }
+
         const items = topics.items?.map(i =>
         {
             const item = new WTopicItem(i.title, DateFormatter.format(i.created));
@@ -64,8 +79,6 @@ export default class CollaborationModule
         });
 
         spinner.destroy();
-        this.empty.destroy();
-
         this.topicList.addItems(items ?? []);
         this.left.appendChild(this.topicList.html);
     }
@@ -83,8 +96,6 @@ export default class CollaborationModule
         this.right.replaceChildren(spinner.html);
         const details = await CollaborationService.getTopicDetails(id);
         const comments = await CollaborationService.getTopicComments(id);
-
-        console.log(details);
 
         topicDetailsTable.addItems
         ([

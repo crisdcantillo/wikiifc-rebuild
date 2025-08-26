@@ -1,6 +1,27 @@
 import WElement from "../core/element";
 import WSlot from "../core/slot";
 
+/**
+* @description class with static methods for managing `slots`
+*
+* @example
+* // create a slot:
+* const slotFiles = WLayout.addSlot("files");
+*
+* // then add some content to it:
+* slotFiles.left.innerHTML = `<p>Files Module</p>`
+*
+* // show `left`, `center` and `right` container for `files` slot
+* tabFiles.onclick = () =>
+* {
+*   WLayout.showSlot("left", "files");
+*   WLayout.showSlot("center", "files");
+*   WLayout.showSlot("right", "files");
+* }
+*
+* // or simply display all slots with one command:
+* WLayout.showAllSlots("files");
+*/
 export default class WLayout extends WElement
 {
     private static leftHtml: HTMLElement;

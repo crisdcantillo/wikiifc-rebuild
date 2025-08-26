@@ -6,7 +6,7 @@ export default class WEmpty extends WElement
     private icon: HTMLImageElement;
     private text: HTMLParagraphElement;
 
-    constructor(type: "info" | "warning" | "error", text: string)
+    constructor(type: "info" | "warning", text: string)
     {
         super(html, css);
 
@@ -18,9 +18,6 @@ export default class WEmpty extends WElement
                 this.icon.src = Assets.statusInfo
                 break;
             case "warning":
-                this.icon.src = Assets.statusUnknown
-                break;
-            case "error":
                 this.icon.src = Assets.statusWarning
                 break;
         }

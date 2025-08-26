@@ -1,20 +1,23 @@
 export enum GlobalEvent
 {
-    OnModelLoaded = "OnModelLoaded",
-    OnModelUnloaded = "OnModelUnloaded",
     OnFileOpened = "OnFileOpened",
     OnFileSelected = "OnFileSelected",
     OnLoggedIn = "OnLoggedIn",
-    OnLoggedOut = "OnLoggedOut",
+    OnLoggedOut = "OnLoggedOut"
 }
 
 export class Global
 {
-    private static loadedModel: string = ""
+    private static _loadedModel: string = ""
 
-    public static get getLoadedModel(): string
+    public static getLoadedModel(): string
     {
-        return Global.loadedModel;
+        return Global._loadedModel;
+    }
+
+    public static setLoadedModel(fileId: string): void
+    {
+        Global._loadedModel = fileId;
     }
 
     public static dispatchEvent(event: GlobalEvent): void
@@ -22,8 +25,8 @@ export class Global
         window.dispatchEvent(new CustomEvent(event));
     }
 
-    public static listenEvent(event: GlobalEvent, cb: (e: Event) => void): void
+    public static listenEvent(event: GlobalEvent, cb: () => void): void
     {
-        window.addEventListener(event, (e) => cb(e));
+        window.addEventListener(event, () => cb());
     }
 }

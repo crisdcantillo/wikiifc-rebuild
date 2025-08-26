@@ -12,8 +12,8 @@ import WConfirm from "../../shared/confirm";
 import WCollapser from "../../shared/collapser";
 import WDetailsTable from "../../shared/details-table";
 import { WDetailsTableItem } from "../../shared/details-table-item";
-import { Global, GlobalEvent } from "../../utils/global";
 import WEmpty from "../../shared/empty";
+import { Global, GlobalEvent } from "../../utils/global";
 
 export default class FilesModule
 {
@@ -23,6 +23,8 @@ export default class FilesModule
     private head: WPanelHead;
     private fileList: WFileList;
     private shareList: WShareList;
+
+    public onModelLoaded: ((fileId: string) => void) | null = null;
 
     constructor(left: HTMLElement, right: HTMLElement)
     {
@@ -36,6 +38,10 @@ export default class FilesModule
         this.left.appendChild(this.fileList.html);
 
         this.addHead();
+
+        // events
+        Global.listenEvent(GlobalEvent.OnLoggedIn, () => this.showFiles());
+        Global.listenEvent(GlobalEvent.OnLoggedOut, () => this.showEmptyFiles("Login to see your files here..."));
     }
 
     private addHead(): void
@@ -84,8 +90,11 @@ export default class FilesModule
                 item.html.classList.add("active");
                 selectedId = i.id;
 
-                Global.dispatchEvent(GlobalEvent.OnModelLoaded);
+                this.onEventModelLoaded(i.id);
                 this.showFileDetails(i.id);
+
+                Global.setLoadedModel(i.id);
+                Global.dispatchEvent(GlobalEvent.OnFileOpened);
             }
 
             item.onDelete = () =>
@@ -154,5 +163,11 @@ export default class FilesModule
 
         this.right.appendChild(collapserDetails.html);
         this.right.appendChild(collapserShare.html);
+    }
+
+    private onEventModelLoaded(fileId: string): void
+    {
+        if (!this.onModelLoaded) return;
+        this.onModelLoaded(fileId);
     }
 }
