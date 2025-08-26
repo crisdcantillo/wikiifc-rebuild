@@ -7,17 +7,18 @@ export default class AuthService
 {
     public static async login(email: string, password: string): Promise<string>
     {
-        const data = await WHTTP.post(`/users/auth-with-password`, {
+        const res = await WHTTP.post(`/users/auth-with-password`, {
             identity: email,
             password: password
-        }) as TAuthUser;
+        });
 
-        if (!data.token) return "";
+        if (!res.success) return "";
+        const data = res.data as TAuthUser;
 
         UToken.saveToken(data.token);
         Global.dispatchEvent(GlobalEvent.OnLoggedIn);
 
-        return data.token;
+        return res.data.token;
     }
 
     public static logout(): void

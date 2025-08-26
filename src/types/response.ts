@@ -1,15 +1,13 @@
 export type TResponse<T> =
 {
     success: boolean,
-    message: string | "",
+    message: string | null,
     data: T | null
 }
 
 export type TPaginatedResponse<T> =
 {
-    page: number,
-    perPage: number,
-    totalPages: number,
-    totalItems: number,
+    success: boolean,
+    message: string | null,
     items: T[]
 }

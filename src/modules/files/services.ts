@@ -1,4 +1,4 @@
-import { TPaginatedResponse } from "../../types/response";
+import { TResponse, TPaginatedResponse } from "../../types/response";
 import { TUser } from "../../types/user";
 import { WHTTP } from "../../utils/http"
 
@@ -7,51 +7,77 @@ type TFile =
     id: string,
     name: string,
     created: string,
-    owner: string,
-    createdBy: string,
-    updated: string
-    sharedWith: string[]
-    expand?: {
-        sharedWith: TSharedWith
-    }
+    owner: TUser,
+    createdBy: TUser,
+    updated: string | null
+    sharedWith: TSharedWith[]
 }
 
 type TSharedWith =
 {
     id: string,
-    file: string[],
-    user: string[],
+    file: TFile,
+    user: TUser,
     created: string,
-    updated: string
-    expand?: {
-        file: TFile,
-        user: TUser
-    }
+    updated: string | null
 }
 
 export default class FilesService
 {
     public static async getFiles(): Promise<TPaginatedResponse<TFile>>
     {
-        const data = await WHTTP.get(`/files/records`) as TPaginatedResponse<TFile>;
-        return data;
+        const res = await WHTTP.get(`/files/records?expand=owner,createdBy,sharedWith`);
+
+        const items = res.data?.items?.map((i: any) => {
+            return {
+                ...i,
+                owner: i?.expand?.owner,
+                createdBy: i?.expand?.createdBy,
+                sharedWith: i?.expand?.sharedWith
+            }
+        }) as TFile[];
+
+        return {
+            success: res.success,
+            message: res.message,
+            items: res.success ? items : []
+        };
     }
 
-    public static async getFile(id: string): Promise<TFile>
+    public static async getFile(id: string): Promise<TResponse<TFile>>
     {
-        const data = await WHTTP.get(`/files/records/${id}`) as TFile;
-        return data;
+        const res = await WHTTP.get(`/files/records/${id}?expand=owner,createdBy,sharedWith`);
+
+        const data = {
+            ...res.data,
+            file: res.data?.expand?.file,
+            user: res.data?.expand?.user
+        } as TFile
+
+        return {
+            success: res.success,
+            message: res.message,
+            data: res.success ? data : null
+        };
     }
 
     public static async getSharedList(fileId: string): Promise<TPaginatedResponse<TUser>>
     {
-        const data = await WHTTP.get(`/shared_with/records?filter=(file="${fileId}")&expand=user`) as TPaginatedResponse<TSharedWith>
+        const res = await WHTTP.get(`/shared_with/records?filter=(file="${fileId}")&expand=user`);
+
+        const items = res.data?.items?.map((i: any) => {
+            return {
+                name: i?.expand?.user.name,
+                email: i?.expand?.user.email,
+                created: i?.expand?.user.created,
+                updated: i?.expand?.user.updated,
+            }
+        }) as TUser[];
+
         return {
-            page: data.page,
-            perPage: data.perPage,
-            totalPages: data.totalPages,
-            totalItems: data.totalItems,
-            items: data.items.map(i => i.expand!.user)
+            success: res.success,
+            message: res.message,
+            items: res.success ? items : []
         };
     }
 }

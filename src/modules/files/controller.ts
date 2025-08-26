@@ -134,7 +134,7 @@ export default class FilesModule
         const fileDetail = await FilesService.getFile(id);
         const sharedList = await FilesService.getSharedList(id);
 
-        tableDetails.addItems([ new WDetailsTableItem("File name", fileDetail?.name ?? "" )]);
+        tableDetails.addItems([ new WDetailsTableItem("File name", fileDetail.data?.name ?? "" )]);
         this.shareList.addItems(sharedList.items?.map(i => new WShareItem(i.name, i.email)) ?? []);
 
         if (sharedList.items.length <= 0)

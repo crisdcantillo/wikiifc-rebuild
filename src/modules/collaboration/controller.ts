@@ -63,6 +63,7 @@ export default class CollaborationModule
         this.topicList.html.appendChild(spinner.html);
 
         const topics = await CollaborationService.getTopics(fileId);
+        console.log(topics)
 
         if (topics.items.length <= 0)
         {
@@ -104,10 +105,10 @@ export default class CollaborationModule
             new WDetailsTableItemEditable("Priority", details?.data?.priority ?? "" ),
             new WDetailsTableItemEditable("Status", details?.data?.status ?? "" ),
             new WDetailsTableItemEditable("Due Date", DateFormatter.format(details?.data?.dueDate)),
-            new WDetailsTableItemEditable("Assigned to", details?.data?.expand?.assignedTo?.email ?? "" ),
-            new WDetailsTableItemEditable("Created by", details?.data?.expand?.createdBy?.email ?? "" ),
+            new WDetailsTableItemEditable("Assigned to", details?.data?.assignedTo?.email ?? "" ),
+            new WDetailsTableItemEditable("Created by", details?.data?.createdBy?.email ?? "" ),
             new WDetailsTableItemEditable("Created at", DateFormatter.format(details?.data?.created)),
-            new WDetailsTableItemEditable("Updated by", details?.data?.expand?.updatedBy?.email ?? "" ),
+            new WDetailsTableItemEditable("Updated by", details?.data?.updatedBy?.email ?? "" ),
             new WDetailsTableItemEditable("Updated at", DateFormatter.format(details?.data?.updated)),
         ]);
 
