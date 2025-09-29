@@ -16,13 +16,13 @@ export default class WCommentItem extends WElement
     {
         super(html, css);
 
-        this.email = this.element.querySelector("[name='email']") as HTMLParagraphElement;
-        this.date = this.element.querySelector("[name='date']") as HTMLParagraphElement;
-        this.text = this.element.querySelector("[name='text']") as HTMLParagraphElement;
+        this.email = this.html.querySelector("[name='email']") as HTMLParagraphElement;
+        this.date = this.html.querySelector("[name='date']") as HTMLParagraphElement;
+        this.text = this.html.querySelector("[name='text']") as HTMLParagraphElement;
 
-        this.edit = this.element.querySelector("[name='edit']") as HTMLButtonElement;
+        this.edit = this.html.querySelector("[name='edit']") as HTMLButtonElement;
         this.edit.style.backgroundImage = `url(${Assets.edit})`
-        this.delete = this.element.querySelector("[name='delete']") as HTMLButtonElement;
+        this.delete = this.html.querySelector("[name='delete']") as HTMLButtonElement;
         this.delete.style.backgroundImage = `url(${Assets.trash})`
 
         this.email.innerText = email;

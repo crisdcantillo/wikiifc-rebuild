@@ -14,15 +14,15 @@ export default class WShareItem extends WElement
     {
         super(html, css);
 
-        this.name = this.element.querySelector("[name='name']") as HTMLParagraphElement;
-        this.email = this.element.querySelector("[name='email']") as HTMLParagraphElement;
-        this.delete = this.element.querySelector("[name='delete']") as HTMLButtonElement;
+        this.name = this.html.querySelector("[name='name']") as HTMLParagraphElement;
+        this.email = this.html.querySelector("[name='email']") as HTMLParagraphElement;
+        this.delete = this.html.querySelector("[name='delete']") as HTMLButtonElement;
 
         this.name.innerText = name;
         this.email.innerText = email;
         this.delete.style.backgroundImage = `url(${Assets.trash})`;
 
-        this.element.addEventListener("click", () => this.onEventClick());
+        this.html.addEventListener("click", () => this.onEventClick());
         this.delete.addEventListener("click", () => this.onEventDelete());
     }
 

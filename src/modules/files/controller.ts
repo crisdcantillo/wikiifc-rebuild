@@ -5,7 +5,6 @@ import Assets from "../../utils/assets";
 import DateFormatter from "../../utils/date";
 import WFileItem from "./file-item";
 import WFileList from "./file-list";
-import FilesService from "./services";
 import WShareItem from "./share-item";
 import WShareList from "./share-list";
 import WConfirm from "../../shared/confirm";
@@ -13,7 +12,7 @@ import WCollapser from "../../shared/collapser";
 import WDetailsTable from "../../shared/details-table";
 import { WDetailsTableItem } from "../../shared/details-table-item";
 import WEmpty from "../../shared/empty";
-import { Global, GlobalEvent } from "../../utils/global";
+import FilesService from "../../services/files";
 
 export default class FilesModule
 {
@@ -38,10 +37,6 @@ export default class FilesModule
         this.left.appendChild(this.fileList.html);
 
         this.addHead();
-
-        // events
-        Global.listenEvent(GlobalEvent.OnLoggedIn, () => this.showFiles());
-        Global.listenEvent(GlobalEvent.OnLoggedOut, () => this.showEmptyFiles("Login to see your files here..."));
     }
 
     private addHead(): void
@@ -92,9 +87,6 @@ export default class FilesModule
 
                 this.onEventModelLoaded(i.id);
                 this.showFileDetails(i.id);
-
-                Global.setLoadedModel(i.id);
-                Global.dispatchEvent(GlobalEvent.OnFileOpened);
             }
 
             item.onDelete = () =>

@@ -1,6 +1,5 @@
 import WEmpty from "../../shared/empty";
 import WPanelHead from "../../shared/panel-head";
-import { Global, GlobalEvent } from "../../utils/global";
 import WSettingsList from "./settings-list";
 
 export default class SettingsModule
@@ -17,9 +16,6 @@ export default class SettingsModule
         this.markupList = new WSettingsList();
         this.left.appendChild(this.head.html);
         this.left.appendChild(this.markupList.html);
-
-        Global.listenEvent(GlobalEvent.OnLoggedIn, () => this.showEmptyMarkup("Coming soon..."));
-        Global.listenEvent(GlobalEvent.OnLoggedOut, () => this.showEmptyMarkup("Login to see your settings here..."));
     }
 
     showEmptyMarkup(message: string): void

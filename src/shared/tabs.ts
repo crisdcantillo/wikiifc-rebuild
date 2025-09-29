@@ -14,14 +14,14 @@ export default class WTabs extends WElement
     {
         super(html, css);
 
-        this.icon = this.element.querySelector("[name='icon']") as HTMLImageElement;
-        this.center = this.element.querySelector("[name='center']") as HTMLDivElement;
-        this.bottom = this.element.querySelector("[name='bottom']") as HTMLDivElement;
+        this.icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
+        this.center = this.html.querySelector("[name='top']") as HTMLDivElement;
+        this.bottom = this.html.querySelector("[name='bottom']") as HTMLDivElement;
 
         this.icon.src = Assets.brandIcon;
     }
 
-    public addTabs(position: "center" | "bottom", tabs: WTabItem[]): void
+    public addTabs(position: "top" | "bottom", tabs: WTabItem[]): void
     {
         tabs.forEach(tab =>
         {
@@ -48,10 +48,10 @@ function html(): string
 {
     return /*html*/`
     <div class="w-tabs">
-        <div class="w-tabs__top">
+        <div class="w-tabs__icon-container">
             <img class="w-tabs__icon" name="icon" />
         </div>
-        <div class="w-tabs__center" name="center"></div>
+        <div class="w-tabs__top" name="top"></div>
         <div class="w-tabs__bottom" name="bottom"></div>
     </div>
     `
@@ -61,6 +61,7 @@ function html(): string
 function css(): string
 {
     return /*css*/`
+    /* TABS */
     .w-tabs
     {
         min-width: 48px;
@@ -72,8 +73,8 @@ function css(): string
         align-items: center;
     }
 
-    /* Top */
-    .w-tabs__top
+    /* Icon Container */
+    .w-tabs__icon-container
     {
         width: 100%;
         aspect-ratio: 1/1;
@@ -96,8 +97,8 @@ function css(): string
         height: 100%;
     }
 
-    /* Center */
-    .w-tabs__center
+    /* Top */
+    .w-tabs__top
     {
         width: 100%;
         flex: 1;

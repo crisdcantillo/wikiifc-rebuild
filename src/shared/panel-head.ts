@@ -10,8 +10,8 @@ export default class WPanelHead extends WElement
     {
         super(html, css);
 
-        this.title = this.element.querySelector("[name='title']") as HTMLParagraphElement;
-        this.options = this.element.querySelector("[name='options']") as HTMLElement;
+        this.title = this.html.querySelector("[name='title']") as HTMLParagraphElement;
+        this.options = this.html.querySelector("[name='options']") as HTMLElement;
         this.title.innerText = title;
     }
 

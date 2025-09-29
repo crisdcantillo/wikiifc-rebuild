@@ -9,8 +9,8 @@ export class WDetailsTableItem extends WElement
     {
         super(html, css);
 
-        this.label = this.element.querySelector("[name='label']") as HTMLParagraphElement;
-        this.value = this.element.querySelector("[name='value']") as HTMLParagraphElement;
+        this.label = this.html.querySelector("[name='label']") as HTMLParagraphElement;
+        this.value = this.html.querySelector("[name='value']") as HTMLParagraphElement;
 
         this.label.innerText = label;
         this.value.innerText = value;
@@ -29,7 +29,7 @@ export class WDetailsTableItemEditable extends WDetailsTableItem
         const container = document.createElement("div");
         container.classList.add("w-details-table-item__floating-container");
 
-        this.element.appendChild(input);
+        this.html.appendChild(input);
         input.value = this.value.innerText;
     }
 }

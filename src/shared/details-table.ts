@@ -19,13 +19,13 @@ export default class WDetailsTable extends WElement
             this.items.push(i);
         });
 
-        this.element.append(frag);
+        this.html.append(frag);
     }
 
     public clear(): void
     {
         this.items = [];
-        this.element.replaceChildren();
+        this.html.replaceChildren();
     }
 }
 

@@ -1,5 +1,3 @@
-import UToken from "./token";
-
 export type WHTTPResponse =
 {
     success: boolean,
@@ -22,10 +20,9 @@ export class WHTTP
         return fetch(`${WHTTP.API}${endpoint}`, {
             method: method,
             headers: {
-                "Authorization": `Bearer ${UToken.token}`,
                 "Content-Type": "application/json"
             },
-            body: body ? JSON.stringify(body) : null
+            body: body
         })
         .then(async res =>
         {

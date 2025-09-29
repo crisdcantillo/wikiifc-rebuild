@@ -13,9 +13,9 @@ export default class WCollapser extends WElement
     {
         super(html, css);
 
-        this.head = this.element.querySelector("[name='head']") as HTMLElement;
-        this.title = this.element.querySelector("[name='title']") as HTMLParagraphElement;
-        this.arrow = this.element.querySelector("[name='arrow']") as HTMLImageElement;
+        this.head = this.html.querySelector("[name='head']") as HTMLElement;
+        this.title = this.html.querySelector("[name='title']") as HTMLParagraphElement;
+        this.arrow = this.html.querySelector("[name='arrow']") as HTMLImageElement;
 
         this.arrow.src = Assets.chevronUp;
         this.title.innerText = title;
@@ -28,12 +28,12 @@ export default class WCollapser extends WElement
     public appendContent(content: HTMLElement): void
     {
         content.setAttribute("collapser-content", "");
-        this.element.appendChild(content);
+        this.html.appendChild(content);
     }
 
     public clearContent(): void
     {
-        this.element.lastElementChild?.remove();
+        this.html.lastElementChild?.remove();
     }
 
     public toggle(): void
@@ -44,14 +44,14 @@ export default class WCollapser extends WElement
 
     public open(): void
     {
-        this.element.classList.add("open");
+        this.html.classList.add("open");
         this.arrow.src = Assets.chevronUp;
         this.isOpen = true;
     }
 
     public close(): void
     {
-        this.element.classList.remove("open");
+        this.html.classList.remove("open");
         this.arrow.src = Assets.chevronDown;
         this.isOpen = false;
     }

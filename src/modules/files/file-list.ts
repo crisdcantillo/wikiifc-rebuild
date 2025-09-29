@@ -13,13 +13,13 @@ export default class WFileList extends WElement
         const frag = document.createDocumentFragment();
         items.forEach(i => frag.appendChild(i.html));
 
-        this.element.replaceChildren();
-        this.element.appendChild(frag);
+        this.html.replaceChildren();
+        this.html.appendChild(frag);
     }
 
     public clear(): void
     {
-        this.element.replaceChildren();
+        this.html.replaceChildren();
     }
 }
 

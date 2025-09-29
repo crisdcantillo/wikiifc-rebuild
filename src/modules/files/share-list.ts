@@ -13,9 +13,9 @@ export default class WShareList extends WElement
     {
         super(html, css);
 
-        this.add = this.element.querySelector("[name='add']") as HTMLButtonElement;
+        this.add = this.html.querySelector("[name='add']") as HTMLButtonElement;
         this.add.style.backgroundImage = `url(${Assets.addCircular})`;
-        this.container = this.element.querySelector("[name='container']") as HTMLElement;
+        this.container = this.html.querySelector("[name='container']") as HTMLElement;
 
         this.add.addEventListener("click", () => this.onEventAddClick());
     }

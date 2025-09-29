@@ -1,3 +1,5 @@
+import { Module } from "./modules";
+
 export default class WSlot
 {
     private id: string;
@@ -5,7 +7,7 @@ export default class WSlot
     private rightHtml: HTMLElement;
     private centerHtml: HTMLElement;
 
-    constructor(name: string)
+    constructor(name: Module)
     {
         this.id = name;
         this.leftHtml = document.createElement("div");

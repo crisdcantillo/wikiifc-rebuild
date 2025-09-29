@@ -7,27 +7,22 @@ export default class WTabItem extends WElement
     constructor(icon: string, tooltip: string)
     {
         super(html, css)
-        this.element.title = tooltip;
-        this.element.style.backgroundImage = `url(${icon})`;
+        this.html.title = tooltip;
+        this.html.style.backgroundImage = `url(${icon})`;
 
-        this.element.addEventListener("click", () => this.eventOnClick());
-    }
-
-    public get html(): HTMLElement
-    {
-        return this.element;
+        this.html.addEventListener("click", () => this.eventOnClick());
     }
 
     public disable(disabled: boolean)
     {
-        if (disabled) this.element.classList.add("disabled");
-        else this.element.classList.remove("disabled");
+        if (disabled) this.html.classList.add("disabled");
+        else this.html.classList.remove("disabled");
     }
 
     public setActive(isActive: boolean): void
     {
-        if (isActive) this.element.classList.add("active");
-        else this.element.classList.remove("active");
+        if (isActive) this.html.classList.add("active");
+        else this.html.classList.remove("active");
     }
 
     private eventOnClick(): void

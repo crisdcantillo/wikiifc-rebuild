@@ -7,13 +7,13 @@ export default class WSpinner extends WElement
     {
         super(html, css);
 
-        const icon = this.element.querySelector("[name='icon']") as HTMLImageElement;
+        const icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
         icon.src = Assets.spinner;
     }
 
     destroy(): void
     {
-        this.element.remove();
+        this.html.remove();
     }
 }
 

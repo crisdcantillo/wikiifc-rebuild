@@ -1,5 +1,5 @@
+import AuthService from "../../services/auth";
 import WLogin from "./login";
-import AuthService from "./services";
 
 export default class AuthModule
 {

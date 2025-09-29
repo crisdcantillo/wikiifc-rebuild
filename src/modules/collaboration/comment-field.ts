@@ -14,9 +14,9 @@ export default class WCommentField extends WElement
     {
         super(html, css);
 
-        this.textarea = this.element.querySelector("[name='textarea']") as HTMLTextAreaElement;
-        this.cta = this.element.querySelector("[name='cta']") as HTMLButtonElement;
-        this.ghostCta = this.element.querySelector("[name='ghost-cta']") as HTMLButtonElement;
+        this.textarea = this.html.querySelector("[name='textarea']") as HTMLTextAreaElement;
+        this.cta = this.html.querySelector("[name='cta']") as HTMLButtonElement;
+        this.ghostCta = this.html.querySelector("[name='ghost-cta']") as HTMLButtonElement;
 
         this.cta.style.backgroundImage = `url(${Assets.saveComment})`;
         this.ghostCta.style.backgroundImage = `url(${Assets.saveComment})`;
@@ -27,8 +27,8 @@ export default class WCommentField extends WElement
 
     private showFullField(show: boolean): void
     {
-        if (show) this.element.classList.add("not-empty");
-        else this.element.classList.remove("not-empty");
+        if (show) this.html.classList.add("not-empty");
+        else this.html.classList.remove("not-empty");
     }
 
     private onEventInput(): void

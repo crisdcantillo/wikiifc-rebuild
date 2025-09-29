@@ -1,6 +1,6 @@
-import { TPaginatedResponse, TResponse } from "../../types/response"
-import { TUser } from "../../types/user"
-import { WHTTP } from "../../utils/http"
+import { TPaginatedResponse, TResponse } from "../types/response"
+import { TUser } from "../types/user"
+import { WHTTP } from "../utils/http"
 
 type TTopic =
 {

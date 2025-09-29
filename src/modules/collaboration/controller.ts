@@ -1,3 +1,4 @@
+import CollaborationService from "../../services/collaboration";
 import WCollapser from "../../shared/collapser";
 import WDetailsTable from "../../shared/details-table";
 import { WDetailsTableItemEditable } from "../../shared/details-table-item";
@@ -7,11 +8,9 @@ import WPanelHeadOption from "../../shared/panel-head-option";
 import WSpinner from "../../shared/spinner";
 import Assets from "../../utils/assets";
 import DateFormatter from "../../utils/date";
-import { Global, GlobalEvent } from "../../utils/global";
 import WCommentField from "./comment-field";
 import WCommentItem from "./comment-item";
 import WCommentList from "./comment-list";
-import CollaborationService from "./services";
 import WTopicItem from "./topic-item";
 import WTopicList from "./topic-list";
 
@@ -35,11 +34,6 @@ export default class CollaborationModule
         this.left.appendChild(this.topicList.html);
 
         this.setHead();
-
-        // events
-        Global.listenEvent(GlobalEvent.OnLoggedIn, () => this.showEmptyTopics("Select a file to see its topics here..."));
-        Global.listenEvent(GlobalEvent.OnLoggedOut, () => this.showEmptyTopics("Login to see your topics here..."));
-        Global.listenEvent(GlobalEvent.OnFileOpened, () => this.showTopics(Global.getLoadedModel()));
     }
 
     private setHead(): void

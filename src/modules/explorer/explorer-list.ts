@@ -1,6 +1,6 @@
 import WElement from "../../core/element";
 
-export default class WMarkupList extends WElement
+export default class WExplorerList extends WElement
 {
     constructor()
     {
@@ -11,14 +11,14 @@ export default class WMarkupList extends WElement
 function html(): string
 {
     return /*html*/`
-    <div class="w-markup-list"></div>
+    <div class="w-explorer-list"></div>
     `
 }
 
 function css(): string
 {
     return /*css*/`
-    .w-markup-list
+    .w-explorer-list
     {
         width: 100%;
         height: 100%;

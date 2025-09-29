@@ -10,8 +10,8 @@ export default class WEmpty extends WElement
     {
         super(html, css);
 
-        this.icon = this.element.querySelector("[name='icon']") as HTMLImageElement;
-        this.text = this.element.querySelector("[name='text']") as HTMLParagraphElement;
+        this.icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
+        this.text = this.html.querySelector("[name='text']") as HTMLParagraphElement;
 
         switch (type) {
             case "info":
@@ -27,7 +27,7 @@ export default class WEmpty extends WElement
 
     public destroy(): void
     {
-        this.element.remove();
+        this.html.remove();
     }
 }
 

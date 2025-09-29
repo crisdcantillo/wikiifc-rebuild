@@ -14,9 +14,9 @@ export default class WConfirm extends WElement
     {
         super(html, css);
 
-        this.text = this.element.querySelector("[name='text']") as HTMLParagraphElement;
-        this.confirm = this.element.querySelector("[name='confirm']") as HTMLButtonElement;
-        this.cancel = this.element.querySelector("[name='cancel']") as HTMLButtonElement;
+        this.text = this.html.querySelector("[name='text']") as HTMLParagraphElement;
+        this.confirm = this.html.querySelector("[name='confirm']") as HTMLButtonElement;
+        this.cancel = this.html.querySelector("[name='cancel']") as HTMLButtonElement;
 
         this.text.innerText = text;
         this.confirm.style.backgroundImage = `url(${Assets.check})`;
@@ -26,7 +26,7 @@ export default class WConfirm extends WElement
         this.cancel.addEventListener("click", () => this.onEventCancel());
 
         this.setPosition(parent, direction);
-        document.body.appendChild(this.element);
+        document.body.appendChild(this.html);
         document.body.addEventListener("click", (e) => this.onEventClickOutside(e));
     }
 
@@ -40,14 +40,14 @@ export default class WConfirm extends WElement
         const dir = direction === "left" ? 1 : -1;
         const offset = 12;
 
-        this.element.style.left = `${leftPos + (width * dir + offset)}px`;
-        this.element.style.top = `${topPos + (height / 2)}px`;
+        this.html.style.left = `${leftPos + (width * dir + offset)}px`;
+        this.html.style.top = `${topPos + (height / 2)}px`;
     }
 
     private onEventClickOutside(e: MouseEvent): void
     {
         const target = e.target as HTMLElement;
-        if (target === this.element) return;
+        if (target === this.html) return;
 
         this.destroy();
     }

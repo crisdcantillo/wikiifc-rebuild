@@ -10,10 +10,10 @@ export default class WLogin extends WElement
     constructor()
     {
         super(html, css);
-        this.email = this.element.querySelector("[name='email']") as HTMLInputElement;
-        this.password = this.element.querySelector("[name='password']") as HTMLInputElement;
+        this.email = this.html.querySelector("[name='email']") as HTMLInputElement;
+        this.password = this.html.querySelector("[name='password']") as HTMLInputElement;
 
-        this.element.addEventListener("submit", (e) => this.onEventSubmit(e));
+        this.html.addEventListener("submit", (e) => this.onEventSubmit(e));
     }
 
     private onEventSubmit(e: SubmitEvent): void

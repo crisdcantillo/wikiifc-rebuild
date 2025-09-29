@@ -3,14 +3,14 @@
 */
 class WElement
 {
-    protected element: HTMLElement;
+    public readonly html: HTMLElement;
 
     constructor(html: () => string, css: () => string)
     {
         // html
         const container = document.createElement("div");
         container.innerHTML = html();
-        this.element = container.firstElementChild as HTMLElement;
+        this.html = container.firstElementChild as HTMLElement;
 
         // css
         const sheet = new CSSStyleSheet();
@@ -18,14 +18,9 @@ class WElement
         document.adoptedStyleSheets.push(sheet);
     }
 
-    public get html()
-    {
-        return this.element;
-    }
-
     public destroy(): void
     {
-        this.element.remove();
+        this.html.remove();
     }
 }
 

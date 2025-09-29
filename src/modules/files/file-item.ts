@@ -22,10 +22,10 @@ export default class WFileItem extends WElement
     {
         super(html, css);
 
-        this.icon = this.element.querySelector("[name='icon']") as HTMLImageElement;
-        this.name = this.element.querySelector("[name='name']") as HTMLParagraphElement;
-        this.date = this.element.querySelector("[name='date']") as HTMLParagraphElement;
-        this.delete = this.element.querySelector("[name='delete']") as HTMLButtonElement;
+        this.icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
+        this.name = this.html.querySelector("[name='name']") as HTMLParagraphElement;
+        this.date = this.html.querySelector("[name='date']") as HTMLParagraphElement;
+        this.delete = this.html.querySelector("[name='delete']") as HTMLButtonElement;
         this.delete.style.backgroundImage = `url(${Assets.trash})`
 
         this.itemId = id;
@@ -33,7 +33,7 @@ export default class WFileItem extends WElement
         this.name.innerText = name;
         this.date.innerText = date;
 
-        this.element.addEventListener("click", (e) =>
+        this.html.addEventListener("click", (e) =>
         {
             clearTimeout(this.clickTimer);
             this.clickTimer = setTimeout(() =>
@@ -42,7 +42,7 @@ export default class WFileItem extends WElement
             }, 200)
         })
 
-        this.element.addEventListener("dblclick", (e) =>
+        this.html.addEventListener("dblclick", (e) =>
         {
             clearTimeout(this.clickTimer);
             this.onEventDoubleClick(e);
