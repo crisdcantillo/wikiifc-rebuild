@@ -1,6 +1,5 @@
-import { TPaginatedResponse, TResponse } from "../types/response"
 import { TUser } from "../types/user"
-import { WHTTP } from "../utils/http"
+import { WRes, WHTTP } from "../utils/http"
 
 type TFile =
 {
@@ -24,60 +23,36 @@ type TSharedWith =
 
 export default class FilesService
 {
-    public static async getFiles(): Promise<TPaginatedResponse<TFile>>
+    public static async getFiles(): Promise<WRes<TFile[]>>
     {
-        const res = await WHTTP.get(`/files/records?expand=owner,createdBy,sharedWith`);
+        const res = await WHTTP.request<TFile[]>
+        ({
+            method: "GET",
+            endpoint: `/files/records?expand=owner,createdBy,sharedWith`
+        });
 
-        const items = res.data?.items?.map((i: any) => {
-            return {
-                ...i,
-                owner: i?.expand?.owner,
-                createdBy: i?.expand?.createdBy,
-                sharedWith: i?.expand?.sharedWith
-            }
-        }) as TFile[];
-
-        return {
-            success: res.success,
-            message: res.message,
-            items: res.success ? items : []
-        };
+        return res;
     }
 
-    public static async getFile(id: string): Promise<TResponse<TFile>>
+    public static async getFile(id: string): Promise<WRes<TFile>>
     {
-        const res = await WHTTP.get(`/files/records/${id}?expand=owner,createdBy,sharedWith`);
+        const res = await WHTTP.request<TFile>
+        ({
+            method: "GET",
+            endpoint: `/files/records/${id}?expand=owner,createdBy,sharedWith`
+        });
 
-        const data = {
-            ...res.data,
-            file: res.data?.expand?.file,
-            user: res.data?.expand?.user
-        } as TFile
-
-        return {
-            success: res.success,
-            message: res.message,
-            data: res.success ? data : null
-        };
+        return res;
     }
 
-    public static async getSharedList(fileId: string): Promise<TPaginatedResponse<TUser>>
+    public static async getSharedList(fileId: string): Promise<WRes<TUser[]>>
     {
-        const res = await WHTTP.get(`/shared_with/records?filter=(file="${fileId}")&expand=user`);
+        const res = await WHTTP.request<TUser[]>
+        ({
+            method: "GET",
+            endpoint: `/shared_with/records?filter=(file="${fileId}")&expand=user`
+        });
 
-        const items = res.data?.items?.map((i: any) => {
-            return {
-                name: i?.expand?.user.name,
-                email: i?.expand?.user.email,
-                created: i?.expand?.user.created,
-                updated: i?.expand?.user.updated,
-            }
-        }) as TUser[];
-
-        return {
-            success: res.success,
-            message: res.message,
-            items: res.success ? items : []
-        };
+        return res;
     }
 }

@@ -59,13 +59,13 @@ export default class CollaborationModule
         const topics = await CollaborationService.getTopics(fileId);
         console.log(topics)
 
-        if (topics.items.length <= 0)
+        if (topics.data?.length ?? 0 <= 0)
         {
             spinner.destroy();
             return this.showEmptyTopics("There are no topics to show for the selected file");
         }
 
-        const items = topics.items?.map(i =>
+        const items = topics.data?.map(i =>
         {
             const item = new WTopicItem(i.title, DateFormatter.format(i.created));
             item.onClick = () => this.showTopicDetails(i.id);
@@ -106,7 +106,7 @@ export default class CollaborationModule
             new WDetailsTableItemEditable("Updated at", DateFormatter.format(details?.data?.updated)),
         ]);
 
-        const commentItems = comments.items?.map(i => new WCommentItem(i.created, DateFormatter.format(i.created), i.content)) ?? [];
+        const commentItems = comments.data?.map(i => new WCommentItem(i.created, DateFormatter.format(i.created), i.content)) ?? [];
         topicComments.addItems(commentItems);
 
         spinner.destroy();

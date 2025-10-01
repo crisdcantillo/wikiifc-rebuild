@@ -68,7 +68,7 @@ export default class FilesModule
 
         const files = await FilesService.getFiles();
 
-        if (files.items.length <= 0)
+        if (files.data?.length ?? 0 <= 0)
         {
             spinner.destroy();
             this.showEmptyFiles("No files yet...");
@@ -76,7 +76,7 @@ export default class FilesModule
         }
 
         let selectedId = "";
-        const items = files.items?.map(i =>
+        const items = files.data?.map(i =>
         {
             const item = new WFileItem(i.id, i.name, DateFormatter.format(i.created));
             item.onClick = () =>
@@ -127,12 +127,12 @@ export default class FilesModule
         const sharedList = await FilesService.getSharedList(id);
 
         tableDetails.addItems([ new WDetailsTableItem("File name", fileDetail.data?.name ?? "" )]);
-        this.shareList.addItems(sharedList.items?.map(i => new WShareItem(i.name, i.email)) ?? []);
+        this.shareList.addItems(sharedList.data?.map(i => new WShareItem(i.name, i.email)) ?? []);
 
-        if (sharedList.items.length <= 0)
+        if (sharedList.data?.length ?? 0 <= 0)
             this.showEmptyShareList("Start sharing your file...");
 
-        const items = sharedList.items?.map((i) =>
+        const items = sharedList.data?.map((i) =>
         {
             const item = new WShareItem(i.name, i.email);
 
@@ -140,7 +140,7 @@ export default class FilesModule
             {
                 item.destroy();
 
-                if (sharedList.items.length <= 0)
+                if (sharedList.data?.length ?? 0 <= 0)
                     this.showEmptyShareList("Start sharing your file...");
             }
 

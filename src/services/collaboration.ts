@@ -1,6 +1,5 @@
-import { TPaginatedResponse, TResponse } from "../types/response"
 import { TUser } from "../types/user"
-import { WHTTP } from "../utils/http"
+import { WRes, WHTTP } from "../utils/http"
 
 type TTopic =
 {
@@ -40,79 +39,47 @@ type TViewpoint =
 
 export default class CollaborationService
 {
-    public static async getTopics(fileId: string): Promise<TPaginatedResponse<TTopic>>
+    public static async getTopics(fileId: string): Promise<WRes<TTopic[]>>
     {
-        const res = await WHTTP.get(`/topics/records?filter=(file.id="${fileId}")`);
+        const res = await WHTTP.request<TTopic[]>
+        ({
+            method: "GET",
+            endpoint: `/topics/records?filter=(file.id="${fileId}")`
+        });
 
-        const items = res.data?.items?.map((i: any) => {
-            return {
-                ...i,
-                assignedTo: i?.expand?.assignedTo,
-                createdBy: i?.expand?.createdBy,
-                updatedBy: i?.expand?.updatedBy
-            }
-        }) as TTopic[];
-
-        return {
-            success: res.success,
-            message: res.message,
-            items: res.success ? items : []
-        };
+        return res;
     }
 
-    public static async getTopicDetails(topicId: string): Promise<TResponse<TTopic>>
+    public static async getTopicDetails(topicId: string): Promise<WRes<TTopic>>
     {
-        const res = await WHTTP.get(`/topics/records/${topicId}?expand=assignedTo,createdBy,updatedBy`);
+        const res = await WHTTP.request<TTopic>
+        ({
+            method: "GET",
+            endpoint: `/topics/records/${topicId}?expand=assignedTo,createdBy,updatedBy`
+        });
 
-        const data = {
-            ...res.data,
-            assignedTo: res.data?.expand?.assignedTo,
-            createdBy: res.data?.expand?.createdBy,
-            updatedBy: res.data?.expand?.updatedBy
-        } as TTopic
-
-        return {
-            success: res.success,
-            message: res.message,
-            data: res.success ? data : null
-        };
+        return res;
     }
 
-    public static async getTopicComments(topicId: string): Promise<TPaginatedResponse<TComment>>
+    public static async getTopicComments(topicId: string): Promise<WRes<TComment[]>>
     {
-        const res = await WHTTP.get(`/comments/records?filter=(topic.id="${topicId}")&expand=createdBy,updatedBy`)
+        const res = await WHTTP.request<TComment[]>
+        ({
+            method: "GET",
+            endpoint: `/comments/records?filter=(topic.id="${topicId}")&expand=createdBy,updatedBy`
+        });
 
-        const items = res.data?.items?.map((i: any) => {
-            return {
-                ...i,
-                createdBy: i?.expand?.createdBy,
-                updatedBy: i?.expand?.updatedBy
-            }
-        }) as TComment[];
-
-        return {
-            success: res.success,
-            message: res.message,
-            items: res.success ? items : []
-        }
+        return res;
     }
 
-    public static async getTopicViewpoints(fileId: string): Promise<TPaginatedResponse<TViewpoint>>
+    public static async getTopicViewpoints(fileId: string): Promise<WRes<TViewpoint[]>>
     {
-        const res = await WHTTP.get(`/viewpoints/records?filter=(file.id="${fileId}")&expand=createdBy,updatedBy`);
+        const res = await WHTTP.request<TViewpoint[]>
+        ({
+            method: "GET",
+            endpoint: `/viewpoints/records?filter=(file.id="${fileId}")&expand=createdBy,updatedBy`
+        });
 
-        const items = res.data?.items?.map((i: any) => {
-            return {
-                ...i,
-                createdBy: i?.expand?.createdBy,
-                updatedBy: i?.expand?.updatedBy
-            }
-        }) as TViewpoint[];
-
-        return {
-            success: res.success,
-            message: res.message,
-            items: res.success ? items : []
-        };
+        return res;
     }
 }

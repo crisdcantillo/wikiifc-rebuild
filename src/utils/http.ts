@@ -1,43 +1,43 @@
-export type WHTTPResponse =
+import { API } from "../api";
+
+export type WRes<T> =
 {
     success: boolean,
-    message: string | null,
-    data: any
+    code?: number | null,
+    error?: string | null,
+    data?: T | null
 }
 
 export class WHTTP
 {
-    private static API = "http://127.0.0.1:8090/api/collections";
-
-    // HTTP verbs
-    public static async get(endpoint: string): Promise<WHTTPResponse> { return WHTTP.request("GET", endpoint) }
-    public static async post(endpoint: string, body: object): Promise<WHTTPResponse> { return WHTTP.request("POST", endpoint, body) }
-    public static async patch(endpoint: string, body: object): Promise<WHTTPResponse> { return WHTTP.request("PATCH", endpoint, body) }
-    public static async delete(endpoint: string, body: object): Promise<WHTTPResponse> { return WHTTP.request("DELETE", endpoint, body) }
-
-    private static async request(method: string, endpoint: string, body: any = null): Promise<WHTTPResponse>
+    public static async request<T>(req: { method: "GET" | "POST", endpoint: string, body?: any | null, headers?: HeadersInit | null }): Promise<WRes<T>>
     {
-        return fetch(`${WHTTP.API}${endpoint}`, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: body
-        })
-        .then(async res =>
+        try
         {
+            const res = await fetch(`${API}${req.endpoint}`, {
+                method: req.method,
+                headers: {
+                    "Content-Type": "application/json",
+                    ...req.headers ?? {}
+                },
+                body: req.body
+            });
+
             return {
-                success: res.status < 300 ? true : false,
-                message: res.status < 300 ? null : "There's something wrong with this request...",
-                data: res.status < 300 ? await res.json() : null
+                success: res.ok,
+                code: res.status,
+                error: res.ok ? null : "Something unexpected happened...",
+                data: await res.json() ?? res.text()
             }
-        }).catch(() =>
+        }
+        catch
         {
             return {
                 success: false,
-                message: "Something went wrong, please try again later",
+                code: 500,
+                error: "We did something wrong, please contact us if the issue persists",
                 data: null
-            }
-        })
+            };
+        }
     }
 }
