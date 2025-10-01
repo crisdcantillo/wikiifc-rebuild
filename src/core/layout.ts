@@ -10,25 +10,25 @@ export enum Module
 }
 
 export class WLayout extends WElement {
-    private static leftHtml: HTMLElement;
-    private static centerHtml: HTMLElement;
-    private static rightHtml: HTMLElement;
+    private leftHtml: HTMLElement;
+    private centerHtml: HTMLElement;
+    private rightHtml: HTMLElement;
 
     constructor() {
         super(html, css);
 
-        WLayout.leftHtml = this.html.querySelector("[name='left']") as HTMLElement;
-        WLayout.rightHtml = this.html.querySelector("[name='right']") as HTMLElement;
-        WLayout.centerHtml = this.html.querySelector("[name='center']") as HTMLElement;
+        this.leftHtml = this.html.querySelector("[name='left']") as HTMLElement;
+        this.rightHtml = this.html.querySelector("[name='right']") as HTMLElement;
+        this.centerHtml = this.html.querySelector("[name='center']") as HTMLElement;
      }
 
-    public static showModule(name: Module): void
+    public showModule(name: Module): void
     {
-        WLayout.hideAllModules();
+        this.hideAllModules();
 
-        const left = WLayout.leftHtml.querySelector(`[slot='${name}-left']`);
-        const center = WLayout.centerHtml.querySelector(`[slot='${name}-center']`);
-        const right = WLayout.rightHtml.querySelector(`[slot='${name}-right']`);
+        const left = this.leftHtml.querySelector(`[slot='${name}-left']`);
+        const center = this.centerHtml.querySelector(`[slot='${name}-center']`);
+        const right = this.rightHtml.querySelector(`[slot='${name}-right']`);
 
         left?.setAttribute("visible", "");
         center?.setAttribute("visible", "");
@@ -45,9 +45,9 @@ export class WLayout extends WElement {
         center.setAttribute("slot", `${name}-center`);
         right.setAttribute("slot", `${name}-right`);
 
-        WLayout.leftHtml.appendChild(left);
-        WLayout.centerHtml.appendChild(center);
-        WLayout.rightHtml.appendChild(right);
+        this.leftHtml.appendChild(left);
+        this.centerHtml.appendChild(center);
+        this.rightHtml.appendChild(right);
 
         return {
             left,
@@ -56,11 +56,11 @@ export class WLayout extends WElement {
         }
     }
 
-    private static hideAllModules(): void
+    private hideAllModules(): void
     {
-        const leftChildren = Array.from(WLayout.leftHtml.children);
-        const centerChildren = Array.from(WLayout.centerHtml.children);
-        const rightChildren = Array.from(WLayout.rightHtml.children);
+        const leftChildren = Array.from(this.leftHtml.children);
+        const centerChildren = Array.from(this.centerHtml.children);
+        const rightChildren = Array.from(this.rightHtml.children);
 
         leftChildren.forEach(c => c.removeAttribute("visible"));
         centerChildren.forEach(c => c.removeAttribute("visible"));
@@ -106,6 +106,7 @@ function css(): string {
         flex-direction: column;
         border-left: 1px solid rgba(var(--color-white), 0.2);
         border-right: 1px solid rgba(var(--color-white), 0.2);
+        position: relative;
     }
 
     .w-tabbed-layout__right

@@ -32,21 +32,34 @@ export default class WLogin extends WElement
 function html(): string
 {
     return /*html*/`
-    <form class="w-login">
-        <h2 class="w-login__title">Login</h2>
-        <div class="w-login__fields">
-            <input class="w-input" type="email" placeholder="Email" name="email" required/>
-            <input class="w-input" type="password" placeholder="Password" name="password" required/>
-        </div>
-        <button class="w-btn--primary" type="submit">Login</button>
-        <p class="w-login__link">Don't have an account? <a>Register</a></p>
-    </form>
+    <div class="w-login-container">
+        <form class="w-login">
+            <h2 class="w-login__title">Login</h2>
+            <div class="w-login__fields">
+                <input class="w-input" type="email" placeholder="Email" name="email" required/>
+                <input class="w-input" type="password" placeholder="Password" name="password" required/>
+            </div>
+            <button class="w-btn--primary" type="submit">Login</button>
+            <p class="w-login__link">Don't have an account? <a>Register</a></p>
+        </form>
+    </div>
     `
 }
 
 function css(): string
 {
     return /*css*/`
+    .w-login-container
+    {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(var(--color-black), 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
     .w-login
     {
         width: 100%;

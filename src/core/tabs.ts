@@ -28,7 +28,7 @@ export class WTabs extends WElement
         this.icon.src = Assets.brandIcon;
     }
 
-    public addTab(position: "top" | "bottom", name: Tab, icon: string, cb?: (() => void) | null): void
+    public addTab(position: "top" | "bottom", name: Tab, icon: string, cb?: (() => void) | null): HTMLButtonElement
     {
         const tab = document.createElement("button");
 
@@ -49,18 +49,7 @@ export class WTabs extends WElement
         }
 
         tab.addEventListener("click", () => cb ? cb() : null);
-    }
-
-    public static enableTab(tab: Tab): void
-    {
-        const t = document.querySelector(`[tab='${tab}']`);
-        t?.classList.remove("disabled");
-    }
-
-    public static disableTab(tab: Tab): void
-    {
-        const t = document.querySelector(`[tab='${tab}']`);
-        t?.classList.add("disabled");
+        return tab;
     }
 
     private setActiveTopTab(tab: HTMLButtonElement): void
@@ -157,7 +146,7 @@ function css(): string
     .w-tab-item:hover { background-color: rgba(var(--color-white), 0.1) }
     .w-tab-item.active { background-color: rgba(var(--color-white), 0.15); cursor: default }
     .w-tab-item.active:hover { background-color: rgba(var(--color-white), 0.15)}
-    .w-tab-item.disabled { pointer-events: none; opacity: 0.25 }
+    .w-tab-item[disabled] { pointer-events: none; opacity: 0.25 }
 
     /* Bottom */
     .w-tabs__bottom

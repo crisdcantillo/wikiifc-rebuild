@@ -6,6 +6,8 @@ import FilesModule from "./modules/files/controller";
 import ExplorerModule from "./modules/explorer/controller";
 import CollaborationModule from "./modules/collaboration/controller";
 import SettingsModule from "./modules/settings/controller";
+import AuthService from "./services/auth";
+import { AuthStorage } from "./storages/auth-storage";
 
 // Layout
 const layout = new WLayout();
@@ -28,17 +30,37 @@ new SettingsModule(settingsPanels.left, settingsPanels.center, settingsPanels.ri
 // Tabs
 const tabs = new WTabs();
 
-tabs.addTab("top", Tab.Files, Assets.tabFile, () => WLayout.showModule(Module.Files));
-tabs.addTab("top", Tab.Explorer, Assets.tabExplorer, () => WLayout.showModule(Module.Explorer));
-tabs.addTab("top", Tab.Collaboration, Assets.tabCollaboration, () => WLayout.showModule(Module.Collaboration));
-tabs.addTab("top", Tab.Settings, Assets.tabSettings, () => WLayout.showModule(Module.Settings));
+tabs.addTab("top", Tab.Files, Assets.tabFile, () => layout.showModule(Module.Files));
+tabs.addTab("top", Tab.Explorer, Assets.tabExplorer, () => layout.showModule(Module.Explorer));
+tabs.addTab("top", Tab.Collaboration, Assets.tabCollaboration, () => layout.showModule(Module.Collaboration));
+tabs.addTab("top", Tab.Settings, Assets.tabSettings, () => layout.showModule(Module.Settings));
 
-tabs.addTab("bottom", Tab.Feedback, Assets.feedback, () => {})
-tabs.addTab("bottom", Tab.Logout, Assets.logout, () => {})
+const feedback = tabs.addTab("bottom", Tab.Feedback, Assets.feedback, () => {});
+const signOut = tabs.addTab("bottom", Tab.Logout, Assets.logout, () =>
+{
+    AuthStorage.instance.signOut();
+    AuthService.logout();
+});
 
 // Init app
 const app = document.querySelector("#app") as HTMLElement;
 app.appendChild(tabs.html);
 app.appendChild(layout.html);
 
-WLayout.showModule(Module.Auth); // init auth module when app is loaded
+layout.showModule(Module.Files); // init auth module when app is loaded
+
+// Events
+AuthStorage.instance.subscribe((state) =>
+{
+    switch (state.status)
+    {
+        case "SignIn":
+            feedback.disabled = false;
+            signOut.disabled = false;
+            break;
+        case "SignOut":
+            feedback.disabled = true;
+            signOut.disabled = true;
+            break;
+    }
+});

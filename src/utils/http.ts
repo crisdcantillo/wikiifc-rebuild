@@ -23,11 +23,15 @@ export class WHTTP
                 body: req.body
             });
 
+            let data;
+            try { data = await res.json() }
+            catch { data = null }
+
             return {
                 success: res.ok,
                 code: res.status,
                 error: res.ok ? null : "Something unexpected happened...",
-                data: await res.json() ?? res.text()
+                data: data
             }
         }
         catch

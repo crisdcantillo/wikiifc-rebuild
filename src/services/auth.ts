@@ -1,8 +1,8 @@
 import { WRes, WHTTP } from "../utils/http";
 
-type TSession = string
+export type TSession = string
 
-type TLogin =
+export type TLogin =
 {
     email: string,
     password: string,
