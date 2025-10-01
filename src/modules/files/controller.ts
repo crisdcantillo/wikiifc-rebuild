@@ -13,22 +13,19 @@ import WDetailsTable from "../../shared/details-table";
 import { WDetailsTableItem } from "../../shared/details-table-item";
 import WEmpty from "../../shared/empty";
 import FilesService from "../../services/files";
+import WModule from "../../core/module";
 
-export default class FilesModule
+export default class FilesModule extends WModule
 {
-    private left: HTMLElement;
-    private right: HTMLElement;
-
     private head: WPanelHead;
     private fileList: WFileList;
     private shareList: WShareList;
 
     public onModelLoaded: ((fileId: string) => void) | null = null;
 
-    constructor(left: HTMLElement, right: HTMLElement)
+    constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
-        this.left = left;
-        this.right = right;
+        super(left, center, right);
         this.head = new WPanelHead("Files");
         this.fileList = new WFileList();
         this.shareList = new WShareList();

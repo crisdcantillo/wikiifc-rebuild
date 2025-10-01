@@ -1,17 +1,14 @@
+import WModule from "../../core/module";
 import AuthService from "../../services/auth";
 import WLogin from "./login";
 
-export default class AuthModule
+export default class AuthModule extends WModule
 {
-    private center: HTMLElement;
-    private right: HTMLElement;
-
     private login: WLogin;
 
-    constructor(center: HTMLElement, right: HTMLElement)
+    constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
-        this.center = center;
-        this.right = right;
+        super(left, center, right);
         this.login = new WLogin();
 
         this.center.appendChild(this.login.html)

@@ -1,3 +1,4 @@
+import WModule from "../../core/module";
 import CollaborationService from "../../services/collaboration";
 import WCollapser from "../../shared/collapser";
 import WDetailsTable from "../../shared/details-table";
@@ -14,19 +15,14 @@ import WCommentList from "./comment-list";
 import WTopicItem from "./topic-item";
 import WTopicList from "./topic-list";
 
-export default class CollaborationModule
+export default class CollaborationModule extends WModule
 {
-    private left: HTMLElement;
-    private right: HTMLElement;
-
     private head: WPanelHead;
     private topicList: WTopicList;
 
-    constructor(left: HTMLElement, right: HTMLElement)
+    constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
-        this.left = left;
-        this.right = right;
-
+        super(left, center, right);
         this.head = new WPanelHead("Collaboration");
         this.topicList = new WTopicList();
 

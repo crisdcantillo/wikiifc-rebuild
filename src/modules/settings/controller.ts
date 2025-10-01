@@ -1,16 +1,16 @@
+import WModule from "../../core/module";
 import WEmpty from "../../shared/empty";
 import WPanelHead from "../../shared/panel-head";
 import WSettingsList from "./settings-list";
 
-export default class SettingsModule
+export default class SettingsModule extends WModule
 {
-    private left: HTMLElement;
     private head: WPanelHead;
     private markupList: WSettingsList;
 
-    constructor(left: HTMLElement)
+    constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
-        this.left = left;
+        super(left, center, right);
         this.head = new WPanelHead("Settings");
 
         this.markupList = new WSettingsList();

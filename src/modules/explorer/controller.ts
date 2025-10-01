@@ -1,16 +1,16 @@
+import WModule from "../../core/module";
 import WEmpty from "../../shared/empty";
 import WPanelHead from "../../shared/panel-head";
 import WExplorerList from "./explorer-list";
 
-export default class ExplorerModule
+export default class ExplorerModule extends WModule
 {
-    private left: HTMLElement;
     private head: WPanelHead;
     private markupList: WExplorerList;
 
-    constructor(left: HTMLElement)
+    constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
-        this.left = left;
+        super(left, center, right);
         this.head = new WPanelHead("Explorer");
 
         this.markupList = new WExplorerList();

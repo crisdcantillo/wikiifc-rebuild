@@ -1,6 +1,3 @@
-/**
-* @description class that every custom element should extend to keep consistency
-*/
 class WElement
 {
     public readonly html: HTMLElement;

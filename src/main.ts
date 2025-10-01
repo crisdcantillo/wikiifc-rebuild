@@ -1,61 +1,44 @@
-import WTabs from "./shared/tabs";
-import WTabItem from "./shared/tab-item";
 import Assets from "./utils/assets";
-import WLayout from "./core/layout";
-import FilesModule from "./modules/files/controller";
+import { Module, WLayout } from "./core/layout";
+import { WTabs, Tab } from "./core/tabs";
 import AuthModule from "./modules/auth/controller";
+import FilesModule from "./modules/files/controller";
+import ExplorerModule from "./modules/explorer/controller";
 import CollaborationModule from "./modules/collaboration/controller";
 import SettingsModule from "./modules/settings/controller";
-import AuthService from "./services/auth";
-import ExplorerModule from "./modules/explorer/controller";
-import { Module } from "./core/modules";
 
 // Layout
 const layout = new WLayout();
 
-layout.addSlot(Module.Auth);
-layout.addSlot(Module.Files);
-layout.addSlot(Module.Explorer);
-layout.addSlot(Module.Collaboration);
-layout.addSlot(Module.Settings);
+const authPanels = layout.createPanels(Module.Auth);
+new AuthModule(authPanels.left, authPanels.center, authPanels.right);
 
-// Modules init
-const authSlot = WLayout.getSlot(Module.Auth);
-new AuthModule(authSlot!.center, authSlot!.right);
+const filesPanels = layout.createPanels(Module.Files);
+new FilesModule(filesPanels.left, filesPanels.center, filesPanels.right);
 
-const filesSlot = WLayout.getSlot(Module.Files);
-new FilesModule(filesSlot!.left, filesSlot!.right);
+const explorerPanels = layout.createPanels(Module.Explorer);
+new ExplorerModule(explorerPanels.left, explorerPanels.center, explorerPanels.right);
 
-const explorerSlot = WLayout.getSlot(Module.Explorer);
-new ExplorerModule(explorerSlot!.left);
+const collaborationPanels = layout.createPanels(Module.Collaboration);
+new CollaborationModule(collaborationPanels.left, collaborationPanels.center, collaborationPanels.right);
 
-const collaborationSlot = WLayout.getSlot(Module.Collaboration);
-new CollaborationModule(collaborationSlot!.left, collaborationSlot!.right);
-
-const settingsSlot = WLayout.getSlot(Module.Settings);
-new SettingsModule(settingsSlot!.left);
+const settingsPanels = layout.createPanels(Module.Settings);
+new SettingsModule(settingsPanels.left, settingsPanels.center, settingsPanels.right);
 
 // Tabs
 const tabs = new WTabs();
 
-const tabFiles = new WTabItem(Assets.tabFile, "Files");
-const tabExplorer = new WTabItem(Assets.tabMarkup, "Explorer");
-const tabCollaboration = new WTabItem(Assets.tabCollaboration, "Collaboration");
-const tabSettings = new WTabItem(Assets.tabSettings, "Settings");
-const tabFeedback = new WTabItem(Assets.feedback, "Feedback");
-const tabLogout = new WTabItem(Assets.logout, "Logout");
+tabs.addTab("top", Tab.Files, Assets.tabFile, () => WLayout.showModule(Module.Files));
+tabs.addTab("top", Tab.Explorer, Assets.tabExplorer, () => WLayout.showModule(Module.Explorer));
+tabs.addTab("top", Tab.Collaboration, Assets.tabCollaboration, () => WLayout.showModule(Module.Collaboration));
+tabs.addTab("top", Tab.Settings, Assets.tabSettings, () => WLayout.showModule(Module.Settings));
 
-tabs.addTabs("top", [tabFiles, tabExplorer, tabCollaboration, tabSettings]);
-tabs.addTabs("bottom", [tabFeedback, tabLogout]);
+tabs.addTab("bottom", Tab.Feedback, Assets.feedback, () => {})
+tabs.addTab("bottom", Tab.Logout, Assets.logout, () => {})
 
-// Tab listeners
-tabFiles.onClick = () => WLayout.showSlot(Module.Files);
-tabExplorer.onClick = () => WLayout.showSlot(Module.Explorer);
-tabCollaboration.onClick = () => WLayout.showSlot(Module.Collaboration);
-tabSettings.onClick = () => WLayout.showSlot(Module.Settings);
-tabLogout.onClick = () => AuthService.logout();
-
-// Init layout
+// Init app
 const app = document.querySelector("#app") as HTMLElement;
 app.appendChild(tabs.html);
 app.appendChild(layout.html);
+
+WLayout.showModule(Module.Auth); // init auth module when app is loaded

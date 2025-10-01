@@ -8,7 +8,7 @@ export default class Assets
 
     // TABS
     public static tabFile = `${Assets.ROOT}/assets/tabs/files.svg`;
-    public static tabMarkup = `${Assets.ROOT}/assets/tabs/markup.svg`;
+    public static tabExplorer = `${Assets.ROOT}/assets/tabs/explorer.svg`;
     public static tabCollaboration = `${Assets.ROOT}/assets/tabs/collab.svg`;
     public static tabSettings = `${Assets.ROOT}/assets/tabs/settings.svg`;
 
