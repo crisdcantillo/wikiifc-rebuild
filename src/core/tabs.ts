@@ -1,16 +1,6 @@
 import WElement from "../core/element";
 import Assets from "../utils/assets";
 
-export enum Tab
-{
-    Files = "files",
-    Explorer = "explorer",
-    Collaboration = "collaboration",
-    Settings = "settings",
-    Feedback = "feedback",
-    Logout = "logout"
-}
-
 export class WTabs extends WElement
 {
     private icon: HTMLImageElement;
@@ -28,7 +18,7 @@ export class WTabs extends WElement
         this.icon.src = Assets.brandIcon;
     }
 
-    public addTab(position: "top" | "bottom", name: Tab, icon: string, cb?: (() => void) | null): HTMLButtonElement
+    public addTab(position: "top" | "bottom", name: string, icon: string, cb?: (() => void) | null): HTMLButtonElement
     {
         const tab = document.createElement("button");
 
@@ -41,7 +31,6 @@ export class WTabs extends WElement
         switch (position) {
             case "top":
                 this.top.appendChild(tab);
-                tab.addEventListener("click", () => this.setActiveTopTab(tab));
                 break;
             case "bottom":
                 this.bottom.appendChild(tab);
@@ -52,10 +41,17 @@ export class WTabs extends WElement
         return tab;
     }
 
-    private setActiveTopTab(tab: HTMLButtonElement): void
+    public getTabByName(tabName: string): HTMLButtonElement | null
     {
-        const tabs = Array.from(this.top.children);
-        tabs.forEach(t => t.classList.remove("active"));
+        const tab = this.html.querySelector(`[tab='${tabName}']`) as HTMLButtonElement;
+        return tab ?? null;
+    }
+
+    public setActiveTab(tab: HTMLButtonElement): void
+    {
+        Array.from(this.top.children).forEach(t => t.classList.remove("active"));
+        Array.from(this.bottom.children).forEach(t => t.classList.remove("active"));
+
         tab.classList.add("active");
     }
 }
@@ -87,6 +83,7 @@ function css(): string
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
+        border-right: 1px solid rgba(var(--color-white), 0.20);
     }
 
     /* Icon Container */
