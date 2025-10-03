@@ -26,6 +26,9 @@ export default class WLogin extends WElement
             email: this.email.value,
             password: this.password.value
         });
+
+        this.email.value = "";
+        this.password.value = "";
     }
 }
 

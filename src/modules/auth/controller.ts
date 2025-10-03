@@ -1,6 +1,7 @@
 import WModule from "../../core/module";
 import PersistentStorage from "../../core/storage";
 import AuthService from "../../services/auth";
+import WSpinner from "../../shared/spinner";
 import { AuthStorage } from "../../storages/auth-storage";
 import WLogin from "./login";
 
@@ -11,21 +12,31 @@ export default class AuthModule extends WModule
     constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
         super(left, center, right);
-        this.login = new WLogin();
-
         this.tryAutoLogin();
 
-        this.center.appendChild(this.login.html)
-        this.right.appendChild(document.createElement("div"));
+        this.login = new WLogin();
+        this.login.onSubmit = async (data) =>
+        {
+            const spinner = new WSpinner();
+            this.login.html.appendChild(spinner.html);
+
+            const res = await AuthService.login(data.email, data.password);
+            spinner.destroy();
+
+            const sessionId = res.data?.sessionId;
+            if (sessionId) AuthStorage.instance.signIn(sessionId);
+            else AuthStorage.instance.signOut();
+
+        }
 
         AuthStorage.instance.subscribe((state) =>
         {
             switch (state.status) {
                 case "SignIn":
-                    this.lockUserOnAuthScreen(false);
+                    this.showAuth(false);
                     break;
                 case "SignOut":
-                    this.lockUserOnAuthScreen(true);
+                    this.showAuth(true);
                     break;
             }
         });
@@ -33,43 +44,30 @@ export default class AuthModule extends WModule
 
     public async tryAutoLogin(): Promise<void>
     {
+
         const sessionId = PersistentStorage.getSessionId();
-        if (!sessionId) return this.userNotAuthorized();
+        if (!sessionId) return AuthStorage.instance.signOut()
+
+        // show spinner in the whole page
+        const body = document.querySelector("body");
+        const spinner = new WSpinner();
+        body?.appendChild(spinner.html);
 
         const res = await AuthService.session(sessionId);
+        setTimeout(() => spinner.destroy(), 300); // delay destroy to avoid blinks on page
+
         const isLoggedIn = res.success;
-
-        if (!isLoggedIn) this.userNotAuthorized();
-        else this.userAuthorized(sessionId);
+        if (!isLoggedIn) AuthStorage.instance.signOut();
+        else AuthStorage.instance.signIn(sessionId);
     }
 
-    private userNotAuthorized(): void
-    {
-        AuthStorage.instance.signOut();
-        this.lockUserOnAuthScreen(true);
-
-        this.login.onSubmit = async (data) =>
-        {
-            const res = await AuthService.login(data.email, data.password);
-            const sessionId = res.data?.sessionId;
-
-            if (sessionId) AuthStorage.instance.signIn(sessionId);
-            else AuthStorage.instance.signOut();
-
-        }
-    }
-
-    private userAuthorized(sessionId: string): void
-    {
-        AuthStorage.instance.signIn(sessionId);
-        this.lockUserOnAuthScreen(false);
-        this.login.onSubmit = null;
-    }
-
-    private lockUserOnAuthScreen(shouldShow: boolean): void
+    private showAuth(shouldShow: boolean): void
     {
         if (shouldShow)
         {
+            // the auth ui is always visible in the middle panel if the user is logged out
+            // we force that behavior setting styles as the ones below
+            this.center.appendChild(this.login.html)
             this.center.style.display = "flex";
             this.center.style.position = "absolute";
             this.center.style.inset = "0";
@@ -77,6 +75,7 @@ export default class AuthModule extends WModule
         }
         else
         {
+            this.login.html.remove();
             this.center.style.removeProperty("display");
             this.center.style.removeProperty("position");
             this.center.style.removeProperty("inset");
