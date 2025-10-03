@@ -6,7 +6,7 @@ import FilesModule from "../modules/files/controller";
 import SettingsModule from "../modules/settings/controller";
 import AuthService from "../services/auth";
 import { AuthStorage } from "../storages/auth-storage";
-import Assets from "../utils/assets";
+import Assets from "../core/assets";
 import { WTabs } from "./tabs";
 
 export enum Module

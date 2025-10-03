@@ -7,7 +7,7 @@ import WEmpty from "../../shared/empty";
 import WPanelHead from "../../shared/panel-head";
 import WPanelHeadOption from "../../shared/panel-head-option";
 import WSpinner from "../../shared/spinner";
-import Assets from "../../utils/assets";
+import Assets from "../../core/assets";
 import DateFormatter from "../../utils/date";
 import WCommentField from "./comment-field";
 import WCommentItem from "./comment-item";

@@ -1,5 +1,5 @@
 import WElement from "../core/element";
-import Assets from "../utils/assets";
+import Assets from "../core/assets";
 
 export class WTabs extends WElement
 {

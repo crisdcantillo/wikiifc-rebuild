@@ -1,5 +1,5 @@
 import WElement from "../../core/element";
-import Assets from "../../utils/assets";
+import Assets from "../../core/assets";
 import WShareItem from "./share-item";
 
 export default class WShareList extends WElement
