@@ -18,7 +18,8 @@ export enum Module
     Settings = "settings"
 }
 
-export class WLayout extends WElement {
+export class WLayout extends WElement
+{
     private static _instance: WLayout;
     private tabs: WTabs;
 
@@ -26,7 +27,8 @@ export class WLayout extends WElement {
     private centerHtml: HTMLElement;
     private rightHtml: HTMLElement;
 
-    private constructor() {
+    private constructor()
+    {
         super(html, css);
 
         this.tabs = new WTabs();
@@ -40,7 +42,7 @@ export class WLayout extends WElement {
         this.initOptions();
      }
 
-     public static get instance()
+     public static get instance(): WLayout
      {
         if (!WLayout._instance) WLayout._instance = new WLayout();
         return WLayout._instance;
@@ -131,7 +133,8 @@ export class WLayout extends WElement {
     }
 }
 
-function html(): string {
+function html(): string
+{
     return /*html*/`
     <div class="w-tabbed-layout">
         <div class="w-tabbed-layout__left" name="left"></div>
@@ -141,7 +144,8 @@ function html(): string {
     `
 }
 
-function css(): string {
+function css(): string
+{
     return /*css*/`
     .w-tabbed-layout
     {

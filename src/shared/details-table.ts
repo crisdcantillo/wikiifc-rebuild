@@ -15,7 +15,7 @@ export default class WDetailsTable extends WElement
         const frag = document.createDocumentFragment();
         items.forEach(i =>
         {
-            frag.appendChild(i.html)
+            frag.appendChild(i.html);
             this.items.push(i);
         });
 

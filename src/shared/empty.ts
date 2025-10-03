@@ -13,12 +13,13 @@ export default class WEmpty extends WElement
         this.icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
         this.text = this.html.querySelector("[name='text']") as HTMLParagraphElement;
 
-        switch (type) {
+        switch (type)
+        {
             case "info":
-                this.icon.src = Assets.statusInfo
+                this.icon.src = Assets.statusInfo;
                 break;
             case "warning":
-                this.icon.src = Assets.statusWarning
+                this.icon.src = Assets.statusWarning;
                 break;
         }
 

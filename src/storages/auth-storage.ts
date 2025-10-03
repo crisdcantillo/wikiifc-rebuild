@@ -6,7 +6,8 @@ export type AuthState =
 
 type Listener = (state: AuthState) => void;
 
-export class AuthStorage {
+export class AuthStorage
+{
     private static _instance: AuthStorage;
     private _state: AuthState = { status: "SignOut" };
     private listeners: Listener[] = [];

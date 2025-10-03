@@ -5,7 +5,8 @@ class DateFormatter
         if (!date) return date ?? "--";
         const d = new Date(date);
 
-        return new Intl.DateTimeFormat("en-US", {
+        return new Intl.DateTimeFormat("en-US",
+        {
             year: "numeric",
             month: "long",
             day: "2-digit"

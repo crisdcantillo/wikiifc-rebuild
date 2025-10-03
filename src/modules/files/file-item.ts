@@ -26,7 +26,7 @@ export default class WFileItem extends WElement
         this.name = this.html.querySelector("[name='name']") as HTMLParagraphElement;
         this.date = this.html.querySelector("[name='date']") as HTMLParagraphElement;
         this.delete = this.html.querySelector("[name='delete']") as HTMLButtonElement;
-        this.delete.style.backgroundImage = `url(${Assets.trash})`
+        this.delete.style.backgroundImage = `url(${Assets.trash})`;
 
         this.itemId = id;
         this.icon.src = Assets.file;
@@ -48,7 +48,7 @@ export default class WFileItem extends WElement
             this.onEventDoubleClick(e);
         })
 
-        this.delete.addEventListener("click", (e) => this.onEventDelete(e))
+        this.delete.addEventListener("click", (e) => this.onEventDelete(e));
     }
 
     public get id(): string
@@ -58,7 +58,8 @@ export default class WFileItem extends WElement
 
     public setStatus(status: WFileItemStatus): void
     {
-        switch (status) {
+        switch (status)
+        {
             case "default":
                 this.icon.src = Assets.file;
                 break;

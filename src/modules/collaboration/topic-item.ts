@@ -25,8 +25,8 @@ export default class WTopicItem extends WElement
         this.name.innerText = name;
         this.date.innerText = date;
 
-        this.html.addEventListener("click", () => this.onEventClick())
-        this.delete.addEventListener("click", () => this.onEventDelete())
+        this.html.addEventListener("click", () => this.onEventClick());
+        this.delete.addEventListener("click", () => this.onEventDelete());
     }
 
     private onEventClick(): void

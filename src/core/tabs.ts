@@ -28,7 +28,8 @@ export class WTabs extends WElement
         tab.title = capitalizedName;
         tab.style.backgroundImage = `url(${icon})`;
 
-        switch (position) {
+        switch (position)
+        {
             case "top":
                 this.top.appendChild(tab);
                 break;

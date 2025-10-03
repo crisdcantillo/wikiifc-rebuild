@@ -14,9 +14,11 @@ export class WHTTP
     {
         try
         {
-            const res = await fetch(`${API}${req.endpoint}`, {
+            const res = await fetch(`${API}${req.endpoint}`,
+            {
                 method: req.method,
-                headers: {
+                headers:
+                {
                     "Content-Type": "application/json",
                     ...req.headers ?? {}
                 },
