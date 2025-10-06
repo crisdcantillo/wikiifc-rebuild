@@ -14,11 +14,14 @@ import WCommentItem from "./comment-item";
 import WCommentList from "./comment-list";
 import WTopicItem from "./topic-item";
 import WTopicList from "./topic-list";
+import { AuthStorage } from "../../storages/auth-storage";
+import { FilesStorage } from "../../storages/files-storage";
 
 export default class CollaborationModule extends WModule
 {
     private head: WPanelHead;
     private topicList: WTopicList;
+    private fakeProjectId: string = "fakeProjectId" //TODO: replace this by a real projectId
 
     constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
@@ -30,6 +33,32 @@ export default class CollaborationModule extends WModule
         this.left.appendChild(this.topicList.html);
 
         this.setHead();
+
+        AuthStorage.instance.subscribe(state =>
+        {
+            switch (state.status)
+            {
+                case "SignOut":
+                    this.showEmptyTopics("Please sign in to see your topics here");
+                    break;
+                case "SignIn":
+                    this.showEmptyTopics("Please open a file to see its topics here");
+                    break;
+            }
+        });
+
+        FilesStorage.instance.subscribe(state =>
+        {
+            switch (state.status)
+            {
+                case "NotOpened":
+                    this.showEmptyTopics("Please open a file to see its topics here")
+                    break;
+                case "Opened":
+                    this.showTopics();
+                    break;
+            }
+        })
     }
 
     private setHead(): void
@@ -45,26 +74,44 @@ export default class CollaborationModule extends WModule
         this.topicList.html.appendChild(empty.html);
     }
 
-    public async showTopics(fileId: string): Promise<void>
+    public async showTopics(): Promise<void>
     {
         const spinner = new WSpinner();
 
         this.topicList.clear();
         this.topicList.html.appendChild(spinner.html);
 
-        const topics = await CollaborationService.getTopics(fileId);
-        console.log(topics)
+        const topics = await CollaborationService.getTopics(this.fakeProjectId);
+        spinner.destroy();
 
-        if (topics.data?.length ?? 0 <= 0)
-        {
-            spinner.destroy();
-            return this.showEmptyTopics("There are no topics to show for the selected file");
-        }
+        if (!topics.data) return this.showEmptyTopics("There are no topics to show for the selected file");
 
-        const items = topics.data?.map(i =>
+        let selectedId = "";
+        const items = topics.data.map(topic =>
         {
-            const item = new WTopicItem(i.title, DateFormatter.format(i.created));
-            item.onClick = () => this.showTopicDetails(i.id);
+            const item = new WTopicItem(topic.guid, topic.title, DateFormatter.format(topic.creation_date));
+            item.onClick = () =>
+            {
+                items?.forEach(i => i.html.classList.remove("active"));
+                item.html.classList.add("active");
+                selectedId = topic.guid;
+
+                this.right.replaceChildren();
+                this.showTopicDetails(topic.guid);
+                this.showTopicComments(topic.guid);
+            }
+
+            item.onDelete = () =>
+            {
+                item.destroy();
+
+                // if deleting the selected item, then clear right
+                if (item.id === selectedId) this.right.replaceChildren();
+
+                // if no more files after deleting last file, show empty message
+                if (this.topicList.html.children.length <= 0)
+                    this.showEmptyTopics("You don't have any topics yet");
+            }
 
             return item;
         });
@@ -76,41 +123,64 @@ export default class CollaborationModule extends WModule
 
     public async showTopicDetails(id: string): Promise<void>
     {
-        const collapserDetails = new WCollapser("Topic");
-        const collapserComments = new WCollapser("Comments");
-
-        const topicDetailsTable = new WDetailsTable();
-        const topicComments = new WCommentList();
-        const topicCommentField = new WCommentField();
+        const collapser = new WCollapser("Topic");
+        const table = new WDetailsTable();
         const spinner = new WSpinner();
 
-        this.right.replaceChildren(spinner.html);
-        const details = await CollaborationService.getTopicDetails(id);
-        const comments = await CollaborationService.getTopicComments(id);
+        this.right.appendChild(collapser.html);
+        collapser.append(spinner.html);
+        const details = await CollaborationService.getTopicDetails(this.fakeProjectId, id);
+        spinner.destroy();
 
-        topicDetailsTable.addItems
+        if (!details.data)
+        {
+            const empty = new WEmpty("warning", "We couldn't load the details of your file, please try again later");
+            collapser.append(empty.html);
+            return;
+        }
+
+        table.addItems
         ([
-            new WDetailsTableItemEditable("Title", details.data?.title ?? "" ),
-            new WDetailsTableItemEditable("Description", details?.data?.description ?? "" ),
-            new WDetailsTableItemEditable("Priority", details?.data?.priority ?? "" ),
-            new WDetailsTableItemEditable("Status", details?.data?.status ?? "" ),
-            new WDetailsTableItemEditable("Due Date", DateFormatter.format(details?.data?.dueDate)),
-            new WDetailsTableItemEditable("Assigned to", details?.data?.assignedTo?.email ?? "" ),
-            new WDetailsTableItemEditable("Created by", details?.data?.createdBy?.email ?? "" ),
-            new WDetailsTableItemEditable("Created at", DateFormatter.format(details?.data?.created)),
-            new WDetailsTableItemEditable("Updated by", details?.data?.updatedBy?.email ?? "" ),
-            new WDetailsTableItemEditable("Updated at", DateFormatter.format(details?.data?.updated)),
+            new WDetailsTableItemEditable("Title", details.data.title ?? "" ),
+            new WDetailsTableItemEditable("Description", details.data.description ?? "" ),
+            new WDetailsTableItemEditable("Priority", details.data.priority ?? "" ),
+            new WDetailsTableItemEditable("Status", details.data.topic_status ?? "" ),
+            new WDetailsTableItemEditable("Due Date", DateFormatter.format(details.data.due_date)),
+            new WDetailsTableItemEditable("Assigned to", details.data.assigned_to ?? "" ),
+            new WDetailsTableItemEditable("Created by", details.data.creation_author ?? "" ),
+            new WDetailsTableItemEditable("Created at", DateFormatter.format(details.data.creation_date)),
+            new WDetailsTableItemEditable("Updated by", details.data.modified_author ?? "" ),
+            new WDetailsTableItemEditable("Updated at", DateFormatter.format(details.data.modified_date ?? "")),
         ]);
 
-        const commentItems = comments.data?.map(i => new WCommentItem(i.created, DateFormatter.format(i.created), i.content)) ?? [];
-        topicComments.addItems(commentItems);
 
+        collapser.append(table.html);
+    }
+    
+    public async showTopicComments(id: string): Promise<void>
+    {
+        const collapser = new WCollapser("Comments");
+        const commentList = new WCommentList();
+        const commentAdder = new WCommentField();
+        const spinner = new WSpinner();
+
+        this.right.appendChild(collapser.html);
+        collapser.append(spinner.html);
+
+        const comments = await CollaborationService.getTopicComments(this.fakeProjectId, id);
         spinner.destroy();
-        collapserDetails.appendContent(topicDetailsTable.html);
-        collapserComments.appendContent(topicComments.html);
-        collapserComments.appendContent(topicCommentField.html);
 
-        this.right.appendChild(collapserDetails.html);
-        this.right.appendChild(collapserComments.html);
+        if (!comments.data)
+        {
+            const empty = new WEmpty("warning", "We couldn't load the comments of this file, please try again later");
+            collapser.append(empty.html);
+            return;
+        }
+
+        const commentItems = comments.data?.map(i => new WCommentItem(i.created, DateFormatter.format(i.created), i.content)) ?? [];
+        commentList.addItems(commentItems);
+        
+        collapser.append(commentList.html);
+        collapser.append(commentAdder.html);
     }
 }

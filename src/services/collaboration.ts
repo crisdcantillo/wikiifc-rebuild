@@ -1,20 +1,20 @@
+import PersistentStorage from "../core/storage"
 import { TUser } from "../types/user"
 import { WRes, WHTTP } from "../utils/http"
 
 type TTopic =
 {
-    id: string,
-    file: string,
+    guid: string,
     title: string,
     description: string | null,
     priority: string | null,
-    status: string | null,
-    dueDate: string | null,
-    assignedTo: TUser | null,
-    created: string,
-    createdBy: TUser,
-    updated: string | null,
-    updatedBy: TUser | null
+    topic_status: string | null,
+    due_date: string | null,
+    assigned_to: string | null,
+    creation_date: string,
+    creation_author: string,
+    modified_date: string | null,
+    modified_author: string | null
 }
 
 type TComment =
@@ -39,45 +39,48 @@ type TViewpoint =
 
 export default class CollaborationService
 {
-    public static async getTopics(fileId: string): Promise<WRes<TTopic[]>>
+    public static async getTopics(projectId: string): Promise<WRes<TTopic[]>>
     {
         const res = await WHTTP.request<TTopic[]>
         ({
             method: "GET",
-            endpoint: `/topics/records?filter=(file.id="${fileId}")`
+            endpoint: `/bcf/3.0/projects/${projectId}/topics`,
+            headers: { "sessionid": PersistentStorage.getSessionId() ?? "" }
         });
 
         return res;
     }
 
-    public static async getTopicDetails(topicId: string): Promise<WRes<TTopic>>
+    public static async getTopicDetails(projectId: string, topicId: string): Promise<WRes<TTopic>>
     {
         const res = await WHTTP.request<TTopic>
         ({
             method: "GET",
-            endpoint: `/topics/records/${topicId}?expand=assignedTo,createdBy,updatedBy`
+            endpoint: `/bcf/3.0/projects/${projectId}/topics/${topicId}`,
+            headers: { "sessionid": PersistentStorage.getSessionId() ?? "" }
         });
 
         return res;
     }
 
-    public static async getTopicComments(topicId: string): Promise<WRes<TComment[]>>
+    public static async getTopicComments(projectId: string, topicId: string): Promise<WRes<TComment[]>>
     {
         const res = await WHTTP.request<TComment[]>
         ({
             method: "GET",
-            endpoint: `/comments/records?filter=(topic.id="${topicId}")&expand=createdBy,updatedBy`
+            endpoint: `/bcf/3.0/projects/${projectId}/topics/${topicId}/comments`,
+            headers: { "sessionid": PersistentStorage.getSessionId() ?? "" }
         });
 
         return res;
     }
 
-    public static async getTopicViewpoints(fileId: string): Promise<WRes<TViewpoint[]>>
+    public static async getTopicViewpoints(projectId: string, topicId: string): Promise<WRes<TViewpoint[]>>
     {
         const res = await WHTTP.request<TViewpoint[]>
         ({
             method: "GET",
-            endpoint: `/viewpoints/records?filter=(file.id="${fileId}")&expand=createdBy,updatedBy`
+            endpoint: `/bcf/3.0/projects/${projectId}/topics/${topicId}/viewpoints`
         });
 
         return res;

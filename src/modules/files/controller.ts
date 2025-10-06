@@ -14,6 +14,7 @@ import WEmpty from "../../shared/empty";
 import FilesService from "../../services/files";
 import WModule from "../../core/module";
 import { AuthStorage } from "../../storages/auth-storage";
+import { FilesStorage } from "../../storages/files-storage";
 
 export default class FilesModule extends WModule
 {
@@ -86,18 +87,20 @@ export default class FilesModule extends WModule
         }
 
         let selectedId = "";
-        const items = files.data.map(i =>
+        const items = files.data.map(file =>
         {
-            const date = new Date(i.timestamp).toString();
-            const item = new WFileItem(i.id, i.name, DateFormatter.format(date));
+            const date = new Date(file.timestamp).toString();
+            const item = new WFileItem(file.id, file.name, DateFormatter.format(date));
             item.onClick = () =>
             {
                 items?.forEach(i => i.html.classList.remove("active"));
                 item.html.classList.add("active");
-                selectedId = i.id;
+                selectedId = file.id;
 
-                this.onEventModelLoaded(i.id);
-                this.showFileDetails(i.id);
+                this.onEventModelLoaded(file.id);
+                this.showFileDetails(file.id);
+
+                FilesStorage.instance.openFile(file.id);
             }
 
             item.onDelete = () =>
@@ -155,8 +158,8 @@ export default class FilesModule extends WModule
         this.shareList.addItems(items ?? []);
 
         spinner.destroy();
-        collapserDetails.appendContent(tableDetails.html);
-        collapserShare.appendContent(this.shareList.html);
+        collapserDetails.append(tableDetails.html);
+        collapserShare.append(this.shareList.html);
 
         this.right.appendChild(collapserDetails.html);
         this.right.appendChild(collapserShare.html);

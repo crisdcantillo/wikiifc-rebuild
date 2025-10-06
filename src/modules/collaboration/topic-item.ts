@@ -3,6 +3,8 @@ import Assets from "../../core/assets";
 
 export default class WTopicItem extends WElement
 {
+    private itemId: string;
+
     private icon: HTMLImageElement;
     private name: HTMLParagraphElement;
     private date: HTMLParagraphElement;
@@ -11,10 +13,11 @@ export default class WTopicItem extends WElement
     public onClick: (() => void) | null = null;
     public onDelete: (() => void) | null = null;
 
-    constructor(name: string, date: string)
+    constructor(id: string, name: string, date: string)
     {
         super(html, css);
 
+        this.itemId = id;
         this.icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
         this.name = this.html.querySelector("[name='name']") as HTMLParagraphElement;
         this.date = this.html.querySelector("[name='date']") as HTMLParagraphElement;
@@ -25,18 +28,25 @@ export default class WTopicItem extends WElement
         this.name.innerText = name;
         this.date.innerText = date;
 
-        this.html.addEventListener("click", () => this.onEventClick());
-        this.delete.addEventListener("click", () => this.onEventDelete());
+        this.html.addEventListener("click", (e) => this.onEventClick(e));
+        this.delete.addEventListener("click", (e) => this.onEventDelete(e));
     }
 
-    private onEventClick(): void
+    public get id(): string
     {
+        return this.itemId;
+    }
+
+    private onEventClick(e: MouseEvent): void
+    {
+        e.stopPropagation();
         if (!this.onClick) return;
         this.onClick();
     }
 
-    private onEventDelete(): void
+    private onEventDelete(e: MouseEvent): void
     {
+        e.stopPropagation();
         if (!this.onDelete) return;
         this.onDelete();
     }
@@ -73,6 +83,7 @@ function css(): string
     }
 
     .w-topic-item:hover { background-color: rgba(var(--color-white), 0.05) }
+    .w-topic-item.active { background-color: rgba(var(--color-white), 0.05) }
 
     .w-topic-item__icon
     {
