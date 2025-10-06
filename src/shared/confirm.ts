@@ -3,6 +3,8 @@ import Assets from "../core/assets";
 
 export default class WConfirm extends WElement
 {
+    private confirmation: HTMLElement;
+    private overlay: HTMLElement;
     private text: HTMLParagraphElement;
     private confirm: HTMLButtonElement;
     private cancel: HTMLButtonElement;
@@ -10,10 +12,12 @@ export default class WConfirm extends WElement
     public onConfirm: (() => void) | null = null;
     public onCancel: (() => void) | null = null;
 
-    constructor(parent: HTMLElement, direction: "left" | "right", text: string)
+    constructor(parent: HTMLElement, text: string)
     {
         super(html, css);
 
+        this.confirmation = this.html.querySelector("[name='confirmation']") as HTMLElement;
+        this.overlay = this.html.querySelector("[name='overlay']") as HTMLElement;
         this.text = this.html.querySelector("[name='text']") as HTMLParagraphElement;
         this.confirm = this.html.querySelector("[name='confirm']") as HTMLButtonElement;
         this.cancel = this.html.querySelector("[name='cancel']") as HTMLButtonElement;
@@ -25,30 +29,38 @@ export default class WConfirm extends WElement
         this.confirm.addEventListener("click", () => this.onEventConfirm());
         this.cancel.addEventListener("click", () => this.onEventCancel());
 
-        this.setPosition(parent, direction);
         document.body.appendChild(this.html);
-        document.body.addEventListener("click", (e) => this.onEventClickOutside(e));
+        this.overlay.addEventListener("click", () => this.onEventClickOutside());
+
+        this.setPosition(parent);
     }
 
-    private setPosition(parent: HTMLElement, direction: "left" | "right"): void
+    private setPosition(parent: HTMLElement): void
     {
+        const elWidth = this.confirmation.clientWidth;
         const leftPos = parent.offsetLeft;
         const topPos = parent.offsetTop;
         const height = parent.clientHeight;
         const width = parent.clientWidth;
+        const offset = 8;
 
-        const dir = direction === "left" ? 1 : -1;
-        const offset = 12;
+        const isThereEnoughSpaceAtRight = leftPos + elWidth < window.innerWidth;
 
-        this.html.style.left = `${leftPos + (width * dir + offset)}px`;
-        this.html.style.top = `${topPos + (height / 2)}px`;
+        if (isThereEnoughSpaceAtRight)
+        {
+            this.confirmation.style.left = `${leftPos + width + offset}px`;
+        }
+        else
+        {
+            this.confirmation.style.left = `${leftPos - elWidth - offset}px`;
+            this.confirmation.classList.add("reverse");
+        }
+
+        this.confirmation.style.top = `${topPos + (height / 2)}px`;
     }
 
-    private onEventClickOutside(e: MouseEvent): void
+    private onEventClickOutside(): void
     {
-        const target = e.target as HTMLElement;
-        if (target === this.html) return;
-
         this.destroy();
     }
 
@@ -61,20 +73,22 @@ export default class WConfirm extends WElement
 
     private onEventCancel(): void
     {
-        if (!this.onCancel) return;
+        if (!this.onCancel) return this.destroy();
         this.onCancel();
-        this.destroy();
     }
 }
 
 function html(): string
 {
     return /*html*/`
-    <div class="w-confirmation">
-        <p class="w-confirmation__text" name="text"></p>
-        <div class="w-confirmation__options">
-            <button class="w-confirmation__confirm" name="confirm"></button>
-            <button class="w-confirmation__cancel" name="cancel"></button>
+    <div class="w-confirmation-container">
+        <div class="w-confirmation-overlay" name="overlay"></div>
+        <div class="w-confirmation" name="confirmation">
+            <div class="w-confirmation__options">
+                <button class="w-confirmation__confirm" name="confirm"></button>
+                <button class="w-confirmation__cancel" name="cancel"></button>
+            </div>
+            <p class="w-confirmation__text" name="text"></p>
         </div>
     </div>
     `
@@ -83,6 +97,19 @@ function html(): string
 function css(): string
 {
     return /*css*/`
+    .w-confirmation-container
+    {
+        position: fixed;
+        inset: 0;
+    }
+
+    .w-confirmation-overlay
+    {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(var(--color-black), 0.65);
+    }
+
     .w-confirmation
     {
         max-width: 350px;
@@ -90,13 +117,16 @@ function css(): string
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
         background-color: rgba(var(--color-darkgrey), 1);
         border-radius: 4px;
         box-shadow: 0px 2px 4px rgba(var(--color-black), 0.75);
         border: 1px solid rgba(var(--color-white), 0.15);
         transform: translateY(-50%);
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 1);
     }
+
+    .w-confirmation.reverse { flex-direction: row-reverse }
+    .w-confirmation.reverse .w-confirmation__options { flex-direction: row-reverse }
 
     .w-confirmation__text { padding: 12px }
 

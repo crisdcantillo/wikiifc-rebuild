@@ -46,11 +46,13 @@ export default class AuthModule extends WModule
     {
 
         const sessionId = PersistentStorage.getSessionId();
-        if (!sessionId) return AuthStorage.instance.signOut()
+        if (!sessionId) return AuthStorage.instance.signOut();
 
         // show spinner in the whole page
         const body = document.querySelector("body");
         const spinner = new WSpinner();
+        spinner.html.style.position = "fixed";
+        spinner.html.style.inset = "0";
         body?.appendChild(spinner.html);
 
         const res = await AuthService.session(sessionId);

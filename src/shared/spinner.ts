@@ -37,8 +37,6 @@ function css(): string
         justify-content: center;
         align-items: center;
         padding: 16px;
-        position: absolute;
-        inset: 0;
         background-color: rgba(var(--color-black), 1);
     }
 

@@ -1,5 +1,6 @@
 import WElement from "../../core/element";
 import Assets from "../../core/assets";
+import WConfirm from "../../shared/confirm";
 
 export default class WShareItem extends WElement
 {
@@ -22,20 +23,27 @@ export default class WShareItem extends WElement
         this.email.innerText = email;
         this.delete.style.backgroundImage = `url(${Assets.trash})`;
 
-        this.html.addEventListener("click", () => this.onEventClick());
-        this.delete.addEventListener("click", () => this.onEventDelete());
+        this.html.addEventListener("click", (e) => this.onEventClick(e));
+        this.delete.addEventListener("click", (e) => this.onEventDelete(e));
     }
 
-    private onEventClick(): void
+    private onEventClick(e: MouseEvent): void
     {
+        e.stopPropagation();
         if (!this.onClick) return;
         this.onClick();
     }
 
-    private onEventDelete(): void
+    private onEventDelete(e: MouseEvent): void
     {
+        e.stopPropagation();
         if (!this.onDelete) return;
-        this.onDelete();
+
+        const confirm = new WConfirm(this.delete, "Are you sure?");
+        confirm.onConfirm = () =>
+        {
+            if (this.onDelete) this.onDelete();
+        }
     }
 }
 

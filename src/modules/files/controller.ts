@@ -7,13 +7,13 @@ import WFileItem from "./file-item";
 import WFileList from "./file-list";
 import WShareItem from "./share-item";
 import WShareList from "./share-list";
-import WConfirm from "../../shared/confirm";
 import WCollapser from "../../shared/collapser";
 import WDetailsTable from "../../shared/details-table";
 import { WDetailsTableItem } from "../../shared/details-table-item";
 import WEmpty from "../../shared/empty";
 import FilesService from "../../services/files";
 import WModule from "../../core/module";
+import { AuthStorage } from "../../storages/auth-storage";
 
 export default class FilesModule extends WModule
 {
@@ -34,6 +34,19 @@ export default class FilesModule extends WModule
         this.left.appendChild(this.fileList.html);
 
         this.addHead();
+
+        AuthStorage.instance.subscribe(state =>
+        {
+            switch (state.status)
+            {
+                case "SignIn":
+                    this.showFiles();
+                    break;
+                case "SignOut":
+                    this.showEmptyFiles("Please sign in to see your files");
+                    break;
+            }
+        })
     }
 
     private addHead(): void
@@ -65,7 +78,7 @@ export default class FilesModule extends WModule
 
         const files = await FilesService.getFiles();
 
-        if (files.data?.length ?? 0 <= 0)
+        if (!files.data)
         {
             spinner.destroy();
             this.showEmptyFiles("No files yet...");
@@ -73,9 +86,10 @@ export default class FilesModule extends WModule
         }
 
         let selectedId = "";
-        const items = files.data?.map(i =>
+        const items = files.data.map(i =>
         {
-            const item = new WFileItem(i.id, i.name, DateFormatter.format(i.created));
+            const date = new Date(i.timestamp).toString();
+            const item = new WFileItem(i.id, i.name, DateFormatter.format(date));
             item.onClick = () =>
             {
                 items?.forEach(i => i.html.classList.remove("active"));
@@ -88,19 +102,14 @@ export default class FilesModule extends WModule
 
             item.onDelete = () =>
             {
-                const confirm = new WConfirm(item.html, "left", "Are you sure?");
-                confirm.onConfirm = () =>
-                {
-                    item.destroy();
+                item.destroy();
 
-                    // if deleting the selected item, then clear right
-                    if (item.id === selectedId) this.right.replaceChildren();
+                // if deleting the selected item, then clear right
+                if (item.id === selectedId) this.right.replaceChildren();
 
-                    // if no more files after deleting last file, show empty message
-                    if (this.fileList.html.children.length <= 0)
-                        this.showEmptyFiles("You don't have any files yet");
-                }
-
+                // if no more files after deleting last file, show empty message
+                if (this.fileList.html.children.length <= 0)
+                    this.showEmptyFiles("You don't have any files yet");
             }
 
             return item;
@@ -121,15 +130,14 @@ export default class FilesModule extends WModule
 
         this.right.replaceChildren(spinner.html);
         const fileDetail = await FilesService.getFile(id);
-        const sharedList = await FilesService.getSharedList(id);
 
         tableDetails.addItems([ new WDetailsTableItem("File name", fileDetail.data?.name ?? "" )]);
-        this.shareList.addItems(sharedList.data?.map(i => new WShareItem(i.name, i.email)) ?? []);
+        this.shareList.addItems(fileDetail.data?.users?.map(i => new WShareItem(i.name, i.email)) ?? []);
 
-        if (sharedList.data?.length ?? 0 <= 0)
+        if (!fileDetail.data?.users)
             this.showEmptyShareList("Start sharing your file...");
 
-        const items = sharedList.data?.map((i) =>
+        const items = fileDetail.data?.users?.map((i) =>
         {
             const item = new WShareItem(i.name, i.email);
 
@@ -137,7 +145,7 @@ export default class FilesModule extends WModule
             {
                 item.destroy();
 
-                if (sharedList.data?.length ?? 0 <= 0)
+                if (!fileDetail.data?.users)
                     this.showEmptyShareList("Start sharing your file...");
             }
 

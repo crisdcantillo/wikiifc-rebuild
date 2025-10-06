@@ -1,24 +1,18 @@
-import { TUser } from "../types/user"
+import PersistentStorage from "../core/storage";
 import { WRes, WHTTP } from "../utils/http"
 
 type TFile =
 {
     id: string,
     name: string,
-    created: string,
-    owner: TUser,
-    createdBy: TUser,
-    updated: string | null
-    sharedWith: TSharedWith[]
+    timestamp: number,
+    users: TSharedWith[] | null,
 }
 
 type TSharedWith =
 {
-    id: string,
-    file: TFile,
-    user: TUser,
-    created: string,
-    updated: string | null
+    email: string,
+    name: string
 }
 
 export default class FilesService
@@ -28,7 +22,8 @@ export default class FilesService
         const res = await WHTTP.request<TFile[]>
         ({
             method: "GET",
-            endpoint: `/files/records?expand=owner,createdBy,sharedWith`
+            endpoint: `/files`,
+            headers: { "sessionid": PersistentStorage.getSessionId() ?? "" }
         });
 
         return res;
@@ -39,18 +34,8 @@ export default class FilesService
         const res = await WHTTP.request<TFile>
         ({
             method: "GET",
-            endpoint: `/files/records/${id}?expand=owner,createdBy,sharedWith`
-        });
-
-        return res;
-    }
-
-    public static async getSharedList(fileId: string): Promise<WRes<TUser[]>>
-    {
-        const res = await WHTTP.request<TUser[]>
-        ({
-            method: "GET",
-            endpoint: `/shared_with/records?filter=(file="${fileId}")&expand=user`
+            endpoint: `/getfileinfo/${id}`,
+            headers: { "sessionid": PersistentStorage.getSessionId() ?? "" }
         });
 
         return res;

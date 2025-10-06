@@ -1,5 +1,6 @@
 import WElement from "../../core/element";
 import Assets from "../../core/assets";
+import WConfirm from "../../shared/confirm";
 
 type WFileItemStatus = "default" | "downloading" | "error" | "opened";
 
@@ -93,7 +94,12 @@ export default class WFileItem extends WElement
     {
         e.stopPropagation();
         if (!this.onDelete) return;
-        this.onDelete();
+
+        const confirm = new WConfirm(this.delete, "Are you sure?");
+        confirm.onConfirm = () =>
+        {
+            if (this.onDelete) this.onDelete();
+        }
     }
 }
 
