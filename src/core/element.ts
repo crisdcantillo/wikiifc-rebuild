@@ -1,4 +1,4 @@
-class WElement
+export default abstract class WElement
 {
     public readonly html: HTMLElement;
 
@@ -20,5 +20,3 @@ class WElement
         this.html.remove();
     }
 }
-
-export default WElement;

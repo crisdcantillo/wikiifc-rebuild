@@ -25,11 +25,6 @@ export default class WEmpty extends WElement
 
         this.text.innerText = text;
     }
-
-    public destroy(): void
-    {
-        this.html.remove();
-    }
 }
 
 function html(): string

@@ -10,11 +10,6 @@ export default class WSpinner extends WElement
         const icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
         icon.src = Assets.spinner;
     }
-
-    destroy(): void
-    {
-        this.html.remove();
-    }
 }
 
 function html(): string
