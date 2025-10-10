@@ -78,7 +78,7 @@ export default class CollaborationModule extends WModule
     {
         const spinner = new WSpinner();
 
-        this.topicList.clear();
+        this.topicList.clearTopicList();
         this.topicList.html.appendChild(spinner.html);
 
         const topics = await CollaborationService.getTopics(this.fakeProjectId);
@@ -117,7 +117,7 @@ export default class CollaborationModule extends WModule
         });
 
         spinner.destroy();
-        this.topicList.addItems(items ?? []);
+        this.topicList.addTopicItems(items ?? []);
         this.left.appendChild(this.topicList.html);
     }
 
@@ -128,14 +128,14 @@ export default class CollaborationModule extends WModule
         const spinner = new WSpinner();
 
         this.right.appendChild(collapser.html);
-        collapser.append(spinner.html);
+        collapser.appendContent(spinner.html);
         const details = await CollaborationService.getTopicDetails(this.fakeProjectId, id);
         spinner.destroy();
 
         if (!details.data)
         {
             const empty = new WEmpty("warning", "We couldn't load the details of your file, please try again later");
-            collapser.append(empty.html);
+            collapser.appendContent(empty.html);
             return;
         }
 
@@ -154,7 +154,7 @@ export default class CollaborationModule extends WModule
         ]);
 
 
-        collapser.append(table.html);
+        collapser.appendContent(table.html);
     }
     
     public async showTopicComments(id: string): Promise<void>
@@ -165,7 +165,7 @@ export default class CollaborationModule extends WModule
         const spinner = new WSpinner();
 
         this.right.appendChild(collapser.html);
-        collapser.append(spinner.html);
+        collapser.appendContent(spinner.html);
 
         const comments = await CollaborationService.getTopicComments(this.fakeProjectId, id);
         spinner.destroy();
@@ -173,14 +173,14 @@ export default class CollaborationModule extends WModule
         if (!comments.data)
         {
             const empty = new WEmpty("warning", "We couldn't load the comments of this file, please try again later");
-            collapser.append(empty.html);
+            collapser.appendContent(empty.html);
             return;
         }
 
         const commentItems = comments.data?.map(i => new WCommentItem(i.created, DateFormatter.format(i.created), i.content)) ?? [];
-        commentList.addItems(commentItems);
+        commentList.addCommentItems(commentItems);
         
-        collapser.append(commentList.html);
-        collapser.append(commentAdder.html);
+        collapser.appendContent(commentList.html);
+        collapser.appendContent(commentAdder.html);
     }
 }

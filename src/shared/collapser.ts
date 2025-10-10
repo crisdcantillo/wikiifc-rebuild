@@ -25,13 +25,13 @@ export default class WCollapser extends WElement
         this.open(); // open by default
     }
 
-    public append(content: HTMLElement): void
+    public appendContent(content: HTMLElement): void
     {
         content.setAttribute("collapser-content", "");
         this.html.appendChild(content);
     }
 
-    public clear(): void
+    public clearContent(): void
     {
         this.html.lastElementChild?.remove();
     }

@@ -8,16 +8,16 @@ export default class WCommentList extends WElement
         super(html, css);
     }
 
-    public addItems(items: WCommentItem[]): void
+    public addCommentItems(items: WCommentItem[]): void
     {
         const frag = document.createDocumentFragment();
-        items.forEach(i => frag.appendChild(i.html));
+        items.forEach(item => frag.appendChild(item.html));
 
         this.html.replaceChildren();
         this.html.appendChild(frag);
     }
 
-    public clear(): void
+    public clearCommentList(): void
     {
         this.html.replaceChildren();
     }

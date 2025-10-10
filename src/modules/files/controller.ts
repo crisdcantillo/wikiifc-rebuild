@@ -22,19 +22,18 @@ export default class FilesModule extends WModule
     private fileList: WFileList;
     private shareList: WShareList;
 
-    public onModelLoaded: ((fileId: string) => void) | null = null;
-
     constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
         super(left, center, right);
-        this.head = new WPanelHead("Files");
         this.fileList = new WFileList();
         this.shareList = new WShareList();
+        this.head = new WPanelHead("Files");
 
         this.left.appendChild(this.head.html);
         this.left.appendChild(this.fileList.html);
 
-        this.addHead();
+        const uploadFile = new WPanelHeadOption(Assets.cloudUpload, "Upload");
+        this.head.addOptions([uploadFile]);
 
         AuthStorage.instance.subscribe(state =>
         {
@@ -48,12 +47,6 @@ export default class FilesModule extends WModule
                     break;
             }
         })
-    }
-
-    private addHead(): void
-    {
-        const uploadFile = new WPanelHeadOption(Assets.cloudUpload, "Upload");
-        this.head.addOptions([uploadFile]);
     }
 
     public showEmptyFiles(message: string): void
@@ -74,7 +67,7 @@ export default class FilesModule extends WModule
     {
         const spinner = new WSpinner();
 
-        this.fileList.clear();
+        this.fileList.clearFileList();
         this.fileList.html.appendChild(spinner.html);
 
         const files = await FilesService.getFiles();
@@ -97,7 +90,6 @@ export default class FilesModule extends WModule
                 item.html.classList.add("active");
                 selectedId = file.id;
 
-                this.onEventModelLoaded(file.id);
                 this.showFileDetails(file.id);
 
                 FilesStorage.instance.openFile(file.id);
@@ -119,7 +111,7 @@ export default class FilesModule extends WModule
         });
 
         spinner.destroy();
-        this.fileList.addItems(items ?? []);
+        this.fileList.addFileItems(items ?? []);
         this.left.appendChild(this.fileList.html);
     }
 
@@ -135,7 +127,7 @@ export default class FilesModule extends WModule
         const fileDetail = await FilesService.getFile(id);
 
         tableDetails.addItems([ new WDetailsTableItem("File name", fileDetail.data?.name ?? "" )]);
-        this.shareList.addItems(fileDetail.data?.users?.map(i => new WShareItem(i.name, i.email)) ?? []);
+        this.shareList.addShareItems(fileDetail.data?.users?.map(i => new WShareItem(i.name, i.email)) ?? []);
 
         if (!fileDetail.data?.users)
             this.showEmptyShareList("Start sharing your file...");
@@ -155,19 +147,13 @@ export default class FilesModule extends WModule
             return item;
         })
 
-        this.shareList.addItems(items ?? []);
+        this.shareList.addShareItems(items ?? []);
 
         spinner.destroy();
-        collapserDetails.append(tableDetails.html);
-        collapserShare.append(this.shareList.html);
+        collapserDetails.appendContent(tableDetails.html);
+        collapserShare.appendContent(this.shareList.html);
 
         this.right.appendChild(collapserDetails.html);
         this.right.appendChild(collapserShare.html);
-    }
-
-    private onEventModelLoaded(fileId: string): void
-    {
-        if (!this.onModelLoaded) return;
-        this.onModelLoaded(fileId);
     }
 }

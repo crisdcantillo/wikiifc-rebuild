@@ -6,22 +6,22 @@ import WExplorerList from "./explorer-list";
 export default class ExplorerModule extends WModule
 {
     private head: WPanelHead;
-    private markupList: WExplorerList;
+    private explorerList: WExplorerList;
 
     constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
         super(left, center, right);
         this.head = new WPanelHead("Explorer");
 
-        this.markupList = new WExplorerList();
+        this.explorerList = new WExplorerList();
         this.left.appendChild(this.head.html);
-        this.left.appendChild(this.markupList.html);
+        this.left.appendChild(this.explorerList.html);
     }
 
     showEmptyMarkup(message: string): void
     {
         const empty = new WEmpty("warning", message);
-        this.markupList.html.replaceChildren();
-        this.markupList.html.appendChild(empty.html);
+        this.explorerList.html.replaceChildren();
+        this.explorerList.html.appendChild(empty.html);
     }
 }

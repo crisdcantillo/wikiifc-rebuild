@@ -20,10 +20,10 @@ export default class WShareList extends WElement
         this.add.addEventListener("click", () => this.onEventAddClick());
     }
 
-    public addItems(items: WShareItem[]): void
+    public addShareItems(items: WShareItem[]): void
     {
         const frag = document.createDocumentFragment();
-        items.forEach(i => frag.appendChild(i.html));
+        items.forEach(item => frag.appendChild(item.html));
 
         this.container.replaceChildren();
         this.container.appendChild(frag);

@@ -6,22 +6,22 @@ import WSettingsList from "./settings-list";
 export default class SettingsModule extends WModule
 {
     private head: WPanelHead;
-    private markupList: WSettingsList;
+    private settingList: WSettingsList;
 
     constructor(left: HTMLElement, center: HTMLElement, right: HTMLElement)
     {
         super(left, center, right);
         this.head = new WPanelHead("Settings");
 
-        this.markupList = new WSettingsList();
+        this.settingList = new WSettingsList();
         this.left.appendChild(this.head.html);
-        this.left.appendChild(this.markupList.html);
+        this.left.appendChild(this.settingList.html);
     }
 
     showEmptyMarkup(message: string): void
     {
         const empty = new WEmpty("warning", message);
-        this.markupList.html.replaceChildren();
-        this.markupList.html.appendChild(empty.html);
+        this.settingList.html.replaceChildren();
+        this.settingList.html.appendChild(empty.html);
     }
 }

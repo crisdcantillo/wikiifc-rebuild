@@ -8,16 +8,16 @@ export default class WFileList extends WElement
         super(html, css);
     }
 
-    public addItems(items: WFileItem[]): void
+    public addFileItems(items: WFileItem[]): void
     {
         const frag = document.createDocumentFragment();
-        items.forEach(i => frag.appendChild(i.html));
+        items.forEach(item => frag.appendChild(item.html));
 
         this.html.replaceChildren();
         this.html.appendChild(frag);
     }
 
-    public clear(): void
+    public clearFileList(): void
     {
         this.html.replaceChildren();
     }
