@@ -77,9 +77,7 @@ export default class CollaborationModule extends WModule
     public async showTopics(): Promise<void>
     {
         const spinner = new WSpinner();
-
-        this.topicList.clearTopicList();
-        this.topicList.html.appendChild(spinner.html);
+        spinner.showInsideOf(this.topicList.html);
 
         const topics = await CollaborationService.getTopics(this.fakeProjectId);
         spinner.destroy();
@@ -90,15 +88,21 @@ export default class CollaborationModule extends WModule
         const items = topics.data.map(topic =>
         {
             const item = new WTopicItem(topic.guid, topic.title, DateFormatter.format(topic.creation_date));
-            item.onClick = () =>
+            item.onClick = async () =>
             {
                 items?.forEach(i => i.html.classList.remove("active"));
                 item.html.classList.add("active");
                 selectedId = topic.guid;
 
                 this.right.replaceChildren();
-                this.showTopicDetails(topic.guid);
-                this.showTopicComments(topic.guid);
+
+                const spinner = new WSpinner();
+                spinner.showFloatingInsideOf(this.right);
+
+                await this.showTopicDetails(topic.guid);
+                await this.showTopicComments(topic.guid);
+
+                spinner.destroy();
             }
 
             item.onDelete = () =>
@@ -125,12 +129,10 @@ export default class CollaborationModule extends WModule
     {
         const collapser = new WCollapser("Topic");
         const table = new WDetailsTable();
-        const spinner = new WSpinner();
 
         this.right.appendChild(collapser.html);
-        collapser.appendContent(spinner.html);
+
         const details = await CollaborationService.getTopicDetails(this.fakeProjectId, id);
-        spinner.destroy();
 
         if (!details.data)
         {
@@ -153,7 +155,6 @@ export default class CollaborationModule extends WModule
             new WDetailsTableItemEditable("Updated at", DateFormatter.format(details.data.modified_date ?? "")),
         ]);
 
-
         collapser.appendContent(table.html);
     }
     
@@ -162,13 +163,10 @@ export default class CollaborationModule extends WModule
         const collapser = new WCollapser("Comments");
         const commentList = new WCommentList();
         const commentAdder = new WCommentField();
-        const spinner = new WSpinner();
 
         this.right.appendChild(collapser.html);
-        collapser.appendContent(spinner.html);
 
         const comments = await CollaborationService.getTopicComments(this.fakeProjectId, id);
-        spinner.destroy();
 
         if (!comments.data)
         {

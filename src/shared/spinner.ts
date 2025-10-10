@@ -10,6 +10,30 @@ export default class WSpinner extends WElement
         const icon = this.html.querySelector("[name='icon']") as HTMLImageElement;
         icon.src = Assets.spinner;
     }
+
+    public showInsideOf(parent: HTMLElement): void
+    {
+        parent.appendChild(this.html);
+    }
+
+    public showFloatingInsideOf(parent: HTMLElement)
+    {
+        const parentIsStatic = getComputedStyle(parent).position === "static";
+
+        if (parentIsStatic)
+        {
+            this.html.classList.add("floating");
+            parent.setAttribute("spinner-parent-floating", "");
+        }
+
+        parent.appendChild(this.html);
+    }
+
+    public override destroy(): void
+    {
+        this.html.parentElement?.removeAttribute("spinner-parent-floating");
+        this.html.remove();
+    }
 }
 
 function html(): string
@@ -35,10 +59,22 @@ function css(): string
         background-color: rgba(var(--color-black), 1);
     }
 
+    .w-spinner.floating
+    {
+        position: absolute;
+        inset: 0;
+        z-index: 99;
+    }
+
     .w-spinner img
     {
         width: 48px;
         height: 48px;
+    }
+
+    [spinner-parent-floating]
+    {
+        position: relative;
     }
     `
 }

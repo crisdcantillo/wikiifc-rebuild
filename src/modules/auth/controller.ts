@@ -18,7 +18,7 @@ export default class AuthModule extends WModule
         this.login.onSubmit = async (data) =>
         {
             const spinner = new WSpinner();
-            this.login.html.appendChild(spinner.html);
+            spinner.showFloatingInsideOf(this.login.html);
 
             const res = await AuthService.login(data.email, data.password);
             spinner.destroy();
@@ -51,9 +51,7 @@ export default class AuthModule extends WModule
         // show spinner in the whole page
         const body = document.querySelector("body");
         const spinner = new WSpinner();
-        spinner.html.style.position = "fixed";
-        spinner.html.style.inset = "0";
-        body?.appendChild(spinner.html);
+        spinner.showFloatingInsideOf(body!);
 
         const res = await AuthService.session(sessionId);
         setTimeout(() => spinner.destroy(), 300); // delay destroy to avoid blinks on page

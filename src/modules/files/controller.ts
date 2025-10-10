@@ -65,10 +65,10 @@ export default class FilesModule extends WModule
 
     public async showFiles(): Promise<void>
     {
-        const spinner = new WSpinner();
+        this.fileList.html.replaceChildren();
 
-        this.fileList.clearFileList();
-        this.fileList.html.appendChild(spinner.html);
+        const spinner = new WSpinner();
+        spinner.showInsideOf(this.fileList.html)
 
         const files = await FilesService.getFiles();
 
